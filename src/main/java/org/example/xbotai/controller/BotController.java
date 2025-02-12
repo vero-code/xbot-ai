@@ -2,6 +2,7 @@ package org.example.xbotai.controller;
 
 import org.example.xbotai.dto.TrendSelectionRequest;
 import org.example.xbotai.service.AIService;
+import org.example.xbotai.service.SocialMediaService;
 import org.example.xbotai.service.TrendService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +18,16 @@ public class BotController {
 
     private final AIService aiService;
 
+    private final SocialMediaService socialMediaService;
+
+    private final Map<String, String> userGeneratedTweets = new HashMap<>();
+
     private final Map<String, String> userSelectedTrends = new HashMap<>();
 
-    public BotController(TrendService trendService, AIService aiService) {
+    public BotController(TrendService trendService, AIService aiService, SocialMediaService socialMediaService) {
         this.trendService = trendService;
         this.aiService = aiService;
+        this.socialMediaService = socialMediaService;
     }
 
     @GetMapping("/trends")
@@ -46,6 +52,27 @@ public class BotController {
             return "Please select a trend before generating a tweet.";
         }
 
-        return aiService.generateTweet(selectedTrend);
+        String generatedTweet = aiService.generateTweet(selectedTrend);
+        userGeneratedTweets.put(userId, generatedTweet);
+
+        return "Generated tweet: \"" + generatedTweet + "\". Please confirm to post.";
+    }
+
+    @PostMapping("/confirm-tweet")
+    public String confirmTweet(@RequestParam String userId, @RequestParam boolean confirm) {
+        String tweetToPost = userGeneratedTweets.get(userId);
+
+        if (tweetToPost == null) {
+            return "No tweet generated to confirm. Please generate a tweet first.";
+        }
+
+        if (confirm) {
+            String response = socialMediaService.postTweet(tweetToPost);
+            userGeneratedTweets.remove(userId);
+            return response;
+        } else {
+            userGeneratedTweets.remove(userId);
+            return "Tweet posting canceled.";
+        }
     }
 }
