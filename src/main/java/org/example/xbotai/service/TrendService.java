@@ -1,6 +1,8 @@
 package org.example.xbotai.service;
 
+import java.util.List;
+
 public interface TrendService {
 
-    String fetchTrends(String country);
+    List<String> fetchTrends(String country);
 }

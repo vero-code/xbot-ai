@@ -2,10 +2,11 @@ package org.example.xbotai.controller;
 
 import org.example.xbotai.service.AIService;
 import org.example.xbotai.service.TrendService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bot")
@@ -15,14 +16,33 @@ public class BotController {
 
     private final AIService aiService;
 
+    private final Map<String, String> userSelectedTrends = new HashMap<>();
+
     public BotController(TrendService trendService, AIService aiService) {
         this.trendService = trendService;
         this.aiService = aiService;
     }
 
+    @GetMapping("/trends")
+    public List<String> getTrends(@RequestParam(defaultValue = "united_states") String country) {
+        return trendService.fetchTrends(country);
+    }
+
+    @PostMapping("/select-trend")
+    public String selectTrend(@RequestParam String trend, @RequestParam String userId) {
+        userSelectedTrends.put(userId, trend);
+        return "Trend '" + trend + "' selected for user " + userId;
+    }
+
+
     @GetMapping("/generate-tweet")
-    public String generateTweet(@RequestParam(defaultValue = "united_states") String country) {
-        String trend = trendService.fetchTrends(country);
-        return aiService.generateTweet(trend);
+    public String generateTweet(@RequestParam String userId) {
+        String selectedTrend = userSelectedTrends.get(userId);
+
+        if (selectedTrend == null) {
+            return "Please select a trend before generating a tweet.";
+        }
+
+        return aiService.generateTweet(selectedTrend);
     }
 }
