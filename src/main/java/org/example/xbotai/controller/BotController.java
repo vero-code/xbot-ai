@@ -1,5 +1,6 @@
 package org.example.xbotai.controller;
 
+import org.example.xbotai.dto.TrendSelectionRequest;
 import org.example.xbotai.service.AIService;
 import org.example.xbotai.service.TrendService;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,9 @@ public class BotController {
     }
 
     @PostMapping("/select-trend")
-    public String selectTrend(@RequestParam String trend, @RequestParam String userId) {
+    public String selectTrend(@RequestBody TrendSelectionRequest request) {
+        String userId = request.userId();
+        String trend = request.trend();
         userSelectedTrends.put(userId, trend);
         return "Trend '" + trend + "' selected for user " + userId;
     }
