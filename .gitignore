@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local ###
+/src/main/resources/application-local.properties
+
+### Data ###
+/data/*.mv.db
+/data/*.h2.db
