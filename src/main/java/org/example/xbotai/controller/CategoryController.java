@@ -1,11 +1,12 @@
 package org.example.xbotai.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.xbotai.dto.CategorySelectionRequest;
 import org.example.xbotai.model.Category;
 import org.example.xbotai.service.CategoryService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,7 +23,21 @@ public class CategoryController {
 
     @GetMapping
     public List<Category> getAllCategories() {
-        List<Category> categories = categoryService.getAllCategories();
-        return categories;
+        return categoryService.getAllCategories();
+    }
+
+    /**
+     * Get the user's selected category
+     */
+    @PostMapping("/select")
+    public ResponseEntity<Category> selectCategory(@RequestBody CategorySelectionRequest request) {
+        Category selectedCategory = categoryService.getCategoryById(request.categoryId());
+
+        if (selectedCategory != null) {
+            return ResponseEntity.ok(selectedCategory);
+        } else {
+            log.warn("CategoryController: Category with ID {} not found", request.categoryId());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
