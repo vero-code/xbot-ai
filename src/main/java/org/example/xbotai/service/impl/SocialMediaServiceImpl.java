@@ -16,10 +16,13 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
     private final SocialMediaProperties socialMediaProperties;
 
+    private final BlockchainService blockchainService;
+
     private static final String TWEET_ENDPOINT = "https://api.twitter.com/2/tweets";
 
-    public SocialMediaServiceImpl(SocialMediaProperties socialMediaProperties) {
+    public SocialMediaServiceImpl(SocialMediaProperties socialMediaProperties, BlockchainService blockchainService) {
         this.socialMediaProperties = socialMediaProperties;
+        this.blockchainService = blockchainService;
     }
 
     @Override
@@ -41,7 +44,8 @@ public class SocialMediaServiceImpl implements SocialMediaService {
         try {
             Response response = service.execute(request);
             if (response.getCode() == 201) {
-                return "Tweet successfully posted!";
+                String blockchainResult = blockchainService.logTweetToBlockchain(tweetContent);
+                return "Tweet successfully posted! Blockchain log: " + blockchainResult;
             } else {
                 return "Failed to post tweet: " + response.getCode() + " " + response.getBody();
             }
