@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "near-api-js": "^5.0.1"
+  }
+}
