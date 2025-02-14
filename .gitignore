@@ -1,8 +1,8 @@
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+!blockchain/ubuntu/src/main/**/target/
+!blockchain/ubuntu/src/test/**/target/
 
 ### STS ###
 .apt_generated
@@ -26,8 +26,8 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+!blockchain/ubuntu/src/main/**/build/
+!blockchain/ubuntu/src/test/**/build/
 
 ### VS Code ###
 .vscode/
@@ -38,3 +38,7 @@ build/
 ### Data ###
 /data/*.mv.db
 /data/*.h2.db
+/.env
+
+### Node.js ###
+/blockchain/node_modules/
