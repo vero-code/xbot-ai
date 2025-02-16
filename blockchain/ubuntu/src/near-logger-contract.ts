@@ -6,7 +6,8 @@ class TweetLogger {
 
     @call({})
     addLog({ tweet }: { tweet: string }): void {
-        this.logs.push({ tweet, timestamp: Date.now() });
+        const timestamp = near.blockTimestamp();
+        this.logs.push({ tweet, timestamp });
         near.log(`Tweet logged: ${tweet}`);
     }
 

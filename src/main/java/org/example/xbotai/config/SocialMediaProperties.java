@@ -7,6 +7,7 @@ public class SocialMediaProperties {
     private String apiSecretKey;
     private String accessToken;
     private String accessTokenSecret;
+    private String botUsername;
 
     public String getApiKey() {
         return apiKey;
@@ -31,5 +32,13 @@ public class SocialMediaProperties {
     }
     public void setAccessTokenSecret(String accessTokenSecret) {
         this.accessTokenSecret = accessTokenSecret;
+    }
+
+    public String getBotUsername() {
+        return botUsername;
+    }
+
+    public void setBotUsername(String botUsername) {
+        this.botUsername = botUsername;
     }
 }

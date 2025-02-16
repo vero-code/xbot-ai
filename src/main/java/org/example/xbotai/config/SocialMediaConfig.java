@@ -19,6 +19,9 @@ public class SocialMediaConfig {
     @Value("${twitter.accessTokenSecret}")
     private String accessTokenSecret;
 
+    @Value("${twitter.botUsername}")
+    private String botUsername;
+
     @Bean
     public SocialMediaProperties twitterProperties() {
         SocialMediaProperties properties = new SocialMediaProperties();
@@ -26,6 +29,7 @@ public class SocialMediaConfig {
         properties.setApiSecretKey(apiSecretKey);
         properties.setAccessToken(accessToken);
         properties.setAccessTokenSecret(accessTokenSecret);
+        properties.setBotUsername(botUsername);
         return properties;
     }
 }

@@ -67,7 +67,7 @@ public class BotController {
         }
 
         if (confirm) {
-            String response = socialMediaService.postTweet(tweetToPost);
+            String response = socialMediaService.postTweet(tweetToPost, true);
             userGeneratedTweets.remove(userId);
             return response;
         } else {

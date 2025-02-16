@@ -26,12 +26,14 @@ public class SocialMediaServiceImpl implements SocialMediaService {
     }
 
     @Override
-    public String postTweet(String tweetContent) {
+    public String postTweet(String tweetContent, boolean logToBlockchain) {
         OAuth10aService service = new ServiceBuilder(socialMediaProperties.getApiKey())
                 .apiSecret(socialMediaProperties.getApiSecretKey())
                 .build(TwitterApi.instance());
 
-        OAuth1AccessToken oauth1AccessToken = new OAuth1AccessToken(socialMediaProperties.getAccessToken(), socialMediaProperties.getAccessTokenSecret());
+        OAuth1AccessToken oauth1AccessToken = new OAuth1AccessToken(
+                socialMediaProperties.getAccessToken(),
+                socialMediaProperties.getAccessTokenSecret());
 
         OAuthRequest request = new OAuthRequest(Verb.POST, TWEET_ENDPOINT);
         request.addHeader("Content-Type", "application/json");
@@ -44,8 +46,12 @@ public class SocialMediaServiceImpl implements SocialMediaService {
         try {
             Response response = service.execute(request);
             if (response.getCode() == 201) {
-                String blockchainResult = blockchainService.logTweetToBlockchain(tweetContent);
-                return "Tweet successfully posted! Blockchain log: " + blockchainResult;
+                if (logToBlockchain) {
+                    String blockchainResult = blockchainService.logTweetToBlockchain(tweetContent);
+                    return "Tweet successfully posted! Blockchain log: " + blockchainResult;
+                } else {
+                    return "Tweet successfully posted!";
+                }
             } else {
                 return "Failed to post tweet: " + response.getCode() + " " + response.getBody();
             }
