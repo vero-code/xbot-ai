@@ -1,35 +1,35 @@
-package org.example.xbotai.config;
+package org.example.xbotai.config.user;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SocialMediaConfig {
+public class SocialMediaUserConfig {
 
-    @Value("${twitter.apiKey}")
+    @Value("${x.user.apiKey}")
     private String apiKey;
 
-    @Value("${twitter.apiSecretKey}")
+    @Value("${x.user.apiSecretKey}")
     private String apiSecretKey;
 
-    @Value("${twitter.accessToken}")
+    @Value("${x.user.accessToken}")
     private String accessToken;
 
-    @Value("${twitter.accessTokenSecret}")
+    @Value("${x.user.accessTokenSecret}")
     private String accessTokenSecret;
 
-    @Value("${twitter.botUsername}")
-    private String botUsername;
+    @Value("${x.user.username}")
+    private String username;
 
-    @Bean
-    public SocialMediaProperties twitterProperties() {
-        SocialMediaProperties properties = new SocialMediaProperties();
+    @Bean(name = "userProperties")
+    public SocialMediaUserProperties xProperties() {
+        SocialMediaUserProperties properties = new SocialMediaUserProperties();
         properties.setApiKey(apiKey);
         properties.setApiSecretKey(apiSecretKey);
         properties.setAccessToken(accessToken);
         properties.setAccessTokenSecret(accessTokenSecret);
-        properties.setBotUsername(botUsername);
+        properties.setUsername(username);
         return properties;
     }
 }

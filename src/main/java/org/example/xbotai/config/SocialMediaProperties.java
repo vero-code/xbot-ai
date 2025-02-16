@@ -1,44 +1,10 @@
 package org.example.xbotai.config;
 
+public interface SocialMediaProperties {
 
-public class SocialMediaProperties {
-
-    private String apiKey;
-    private String apiSecretKey;
-    private String accessToken;
-    private String accessTokenSecret;
-    private String botUsername;
-
-    public String getApiKey() {
-        return apiKey;
-    }
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-    public String getApiSecretKey() {
-        return apiSecretKey;
-    }
-    public void setApiSecretKey(String apiSecretKey) {
-        this.apiSecretKey = apiSecretKey;
-    }
-    public String getAccessToken() {
-        return accessToken;
-    }
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-    public String getAccessTokenSecret() {
-        return accessTokenSecret;
-    }
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
-    }
-
-    public String getBotUsername() {
-        return botUsername;
-    }
-
-    public void setBotUsername(String botUsername) {
-        this.botUsername = botUsername;
-    }
+    String getApiKey();
+    String getApiSecretKey();
+    String getAccessToken();
+    String getAccessTokenSecret();
+    String getUsername();
 }
