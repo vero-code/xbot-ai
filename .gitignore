@@ -38,9 +38,6 @@ build/
 ### Data ###
 /data/*.mv.db
 /data/*.h2.db
-/.env
 
 ### Node.js ###
 /blockchain/node_modules/
-/node_modules/
-/venv/
