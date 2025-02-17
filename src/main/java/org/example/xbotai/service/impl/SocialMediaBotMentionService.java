@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SocialMediaMentionService {
+public class SocialMediaBotMentionService {
 
     private final SocialMediaUserProperties socialMediaUserProperties;
     private final SocialMediaBotProperties socialMediaBotProperties;
@@ -29,10 +29,10 @@ public class SocialMediaMentionService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final SocialMediaService socialMediaService;
     private final TrendService trendService;
-    private final Logger logger = LoggerFactory.getLogger(SocialMediaMentionService.class);
+    private final Logger logger = LoggerFactory.getLogger(SocialMediaBotMentionService.class);
     private String lastSeenMentionId = null;
 
-    public SocialMediaMentionService(@Qualifier("userProperties") SocialMediaUserProperties socialMediaUserProperties,
+    public SocialMediaBotMentionService(@Qualifier("userProperties") SocialMediaUserProperties socialMediaUserProperties,
                                      @Qualifier("botProperties") SocialMediaBotProperties socialMediaBotProperties,
                                      SocialMediaService socialMediaService,
                                      TrendService trendService) {
@@ -40,22 +40,23 @@ public class SocialMediaMentionService {
         this.socialMediaBotProperties = socialMediaBotProperties;
         this.socialMediaService = socialMediaService;
         this.trendService = trendService;
-        this.oAuthService = new ServiceBuilder(socialMediaUserProperties.getApiKey())
-                .apiSecret(socialMediaUserProperties.getApiSecretKey())
+        this.oAuthService = new ServiceBuilder(socialMediaBotProperties.getApiKey())
+                .apiSecret(socialMediaBotProperties.getApiSecretKey())
                 .build(TwitterApi.instance());
         this.accessToken = new OAuth1AccessToken(
-                socialMediaUserProperties.getAccessToken(),
-                socialMediaUserProperties.getAccessTokenSecret());
+                socialMediaBotProperties.getAccessToken(),
+                socialMediaBotProperties.getAccessTokenSecret());
     }
 
     /**
-     * Polls for tweets in the user's account that mention the bot every 15 minutes.
+     * Polls for tweets in the bot's account that mention the bot every 15 minutes.
+     * Then filters them to keep only tweets sent from the selected user's account.
      */
     @Scheduled(fixedDelay = 900000)
     public void pollMentions() {
         try {
-            String userId = getUserId(socialMediaUserProperties.getUsername());
-            String url = "https://api.twitter.com/2/users/" + userId + "/mentions?tweet.fields=author_id";
+            String botId = getUserId(socialMediaBotProperties.getUsername());
+            String url = "https://api.twitter.com/2/users/" + botId + "/mentions?tweet.fields=author_id";
             if (lastSeenMentionId != null) {
                 url += "&since_id=" + lastSeenMentionId;
             }
@@ -63,10 +64,10 @@ public class SocialMediaMentionService {
             Response response = oAuthService.execute(request);
 
             if (response.getCode() == 200) {
-                processMentionsResponse(response.getBody(), userId);
+                processMentionsResponse(response.getBody(), botId);
             } else {
                 logger.error("Error getting mentions: " + response.getCode() + " " + response.getBody());
-                fallbackToRecentSearch(userId);
+                fallbackToRecentSearch(botId);
             }
         } catch (Exception e) {
             logger.error("Exception when polling mentions", e);
@@ -74,8 +75,7 @@ public class SocialMediaMentionService {
     }
 
     /**
-     * Fallback method using /tweets/search/recent.
-     * Here, we search for tweets that mention the bot (using the bot's username).
+     * Fallback method if the main request does not work.
      */
     private void fallbackToRecentSearch(String botId) {
         try {
@@ -83,10 +83,7 @@ public class SocialMediaMentionService {
                     + socialMediaBotProperties.getUsername()
                     + "&max_results=10&tweet.fields=author_id";
             OAuthRequest fallbackRequest = createOAuthRequest(fallbackUrl);
-            logger.info("Sending fallback request to URL: " + fallbackUrl);
             Response fallbackResponse = oAuthService.execute(fallbackRequest);
-            logger.info("Fallback response code: " + fallbackResponse.getCode());
-            logger.info("Fallback response body: " + fallbackResponse.getBody());
             if (fallbackResponse.getCode() == 200) {
                 processMentionsResponse(fallbackResponse.getBody(), botId);
             } else {
@@ -112,13 +109,10 @@ public class SocialMediaMentionService {
      * Processes a JSON response with mentions.
      */
     private void processMentionsResponse(String responseBody, String botId) throws Exception {
-        logger.info("Processing mentions response: " + responseBody);
         JsonNode root = objectMapper.readTree(responseBody);
         if (root.has("data")) {
             JsonNode data = root.get("data");
-            logger.info("Found " + data.size() + " mention(s) in response.");
             for (JsonNode tweet : data) {
-                logger.info("Processing tweet JSON: " + tweet.toString());
                 processSingleTweet(tweet);
             }
         } else {
@@ -127,31 +121,32 @@ public class SocialMediaMentionService {
     }
 
     /**
-     * Processes one tweet with a mention.
-     * If a tweet contains a bot mention, respond to it on behalf of the bot.
+     * Filters tweets, leaving only those authored by a specific user.
+     * If the tweet text contains the commands and a mention of a bot, replies to it.
      */
     private void processSingleTweet(JsonNode tweet) {
         String tweetId = tweet.get("id").asText();
         String text = tweet.get("text").asText();
-        logger.info("Tweet ID: " + tweetId + ", text: " + text);
 
         String tweetAuthorId = tweet.has("author_id") ? tweet.get("author_id").asText() : null;
         if (tweetAuthorId == null) {
             logger.warn("Tweet without author_id, skipping: " + tweet.toString());
             return;
         }
-        logger.info("Tweet author_id: " + tweetAuthorId);
 
-        if (tweetAuthorId.equals(getUserIdSilently(socialMediaUserProperties.getUsername()))) {
-            logger.info("Skipping tweet sent by user itself, as it is not a command for the bot.");
+        String userIdSilently = getUserIdSilently(socialMediaUserProperties.getUsername());
+        if (!tweetAuthorId.equals(userIdSilently)) {
+            logger.info("Skipping tweet not sent by selected user. Tweet author_id: " + tweetAuthorId);
+            return;
         }
 
         String botMention = "@" + socialMediaBotProperties.getUsername();
+        logger.info("Searching for bot mention: " + botMention);
         if (text.toLowerCase().contains("trends") && text.contains(botMention)) {
             logger.info("Detected 'trends' command in tweet: " + text);
-            processTrendsCommand(tweetId, text);
+            askCountryForTrends(tweetId, text);
         } else {
-            logger.info("Tweet does not contain required command, skipping.");
+            logger.info("Tweet does not contain required command, skipping: " + text);
         }
         updateLastSeenMentionId(tweetId);
     }
@@ -166,11 +161,11 @@ public class SocialMediaMentionService {
     }
 
     /**
-     * Reply to a tweet with a command by sending a response on behalf of the bot.
+     * Replies to a tweet that contains the "trends" command.
+     * Posts on behalf of the bot.
      */
-    private void processTrendsCommand(String tweetId, String text) {
+    private void askCountryForTrends(String tweetId, String text) {
         try {
-            logger.info("Replying to tweet with ID: " + tweetId);
             String botAnswer = "Enter your country to search for trends. For example: United States, Canada, etc.";
             String postResponse = socialMediaService.postBotReplyTweet(botAnswer, tweetId, false);
             logger.info("Reply posted for tweet ID " + tweetId + ". Response: " + postResponse);
@@ -184,9 +179,7 @@ public class SocialMediaMentionService {
      */
     private String getUserId(String username) throws Exception {
         String url = "https://api.twitter.com/2/users/by/username/" + username;
-        OAuthRequest request = new OAuthRequest(Verb.GET, url);
-        request.addHeader("Content-Type", "application/json");
-        oAuthService.signRequest(accessToken, request);
+        OAuthRequest request = createOAuthRequest(url);
         Response response = oAuthService.execute(request);
         if (response.getCode() == 200) {
             JsonNode root = objectMapper.readTree(response.getBody());
