@@ -13,6 +13,7 @@ import org.example.xbotai.config.bot.SocialMediaBotProperties;
 import org.example.xbotai.config.user.SocialMediaUserProperties;
 import org.example.xbotai.service.SocialMediaService;
 import org.example.xbotai.service.TrendService;
+import org.example.xbotai.util.SocialMediaCommandParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,16 +31,19 @@ public class SocialMediaBotMentionService {
     private final SocialMediaService socialMediaService;
     private final TrendService trendService;
     private final Logger logger = LoggerFactory.getLogger(SocialMediaBotMentionService.class);
+    private final TrendsCommandResponder trendsCommandResponder;
     private String lastSeenMentionId = null;
 
     public SocialMediaBotMentionService(@Qualifier("userProperties") SocialMediaUserProperties socialMediaUserProperties,
                                      @Qualifier("botProperties") SocialMediaBotProperties socialMediaBotProperties,
                                      SocialMediaService socialMediaService,
-                                     TrendService trendService) {
+                                     TrendService trendService,
+                                     TrendsCommandResponder trendsCommandResponder) {
         this.socialMediaUserProperties = socialMediaUserProperties;
         this.socialMediaBotProperties = socialMediaBotProperties;
         this.socialMediaService = socialMediaService;
         this.trendService = trendService;
+        this.trendsCommandResponder = trendsCommandResponder;
         this.oAuthService = new ServiceBuilder(socialMediaBotProperties.getApiKey())
                 .apiSecret(socialMediaBotProperties.getApiSecretKey())
                 .build(TwitterApi.instance());
@@ -136,17 +140,24 @@ public class SocialMediaBotMentionService {
 
         String userIdSilently = getUserIdSilently(socialMediaUserProperties.getUsername());
         if (!tweetAuthorId.equals(userIdSilently)) {
-            logger.info("Skipping tweet not sent by selected user. Tweet author_id: " + tweetAuthorId);
+            logger.info("Skipping tweet not sent by selected user. Tweet author_id: {}", tweetAuthorId);
             return;
         }
 
         String botMention = "@" + socialMediaBotProperties.getUsername();
-        logger.info("Searching for bot mention: " + botMention);
         if (text.toLowerCase().contains("trends") && text.contains(botMention)) {
-            logger.info("Detected 'trends' command in tweet: " + text);
-            askCountryForTrends(tweetId, text);
+            logger.info("Detected 'trends' command in tweet: {}", text);
+            trendsCommandResponder.askCountryForTrends(tweetId, text);
+        } else if (text.toLowerCase().contains("country") && text.contains(botMention)){
+            logger.info("Detected 'country' command in tweet: {}", text);
+            String country = SocialMediaCommandParser.parseNextWordAfter(text, "country");
+            if (country != null) {
+                logger.info("User specified country: {}", country);
+            } else {
+                logger.info("No word found after 'country'.");
+            }
         } else {
-            logger.info("Tweet does not contain required command, skipping: " + text);
+            logger.info("Tweet does not contain required command, skipping: {}", text);
         }
         updateLastSeenMentionId(tweetId);
     }
@@ -157,20 +168,6 @@ public class SocialMediaBotMentionService {
     private void updateLastSeenMentionId(String tweetId) {
         if (lastSeenMentionId == null || Long.parseLong(tweetId) > Long.parseLong(lastSeenMentionId)) {
             lastSeenMentionId = tweetId;
-        }
-    }
-
-    /**
-     * Replies to a tweet that contains the "trends" command.
-     * Posts on behalf of the bot.
-     */
-    private void askCountryForTrends(String tweetId, String text) {
-        try {
-            String botAnswer = "Enter your country to search for trends. For example: United States, Canada, etc.";
-            String postResponse = socialMediaService.postBotReplyTweet(botAnswer, tweetId, false);
-            logger.info("Reply posted for tweet ID " + tweetId + ". Response: " + postResponse);
-        } catch (Exception e) {
-            logger.error("Error processing trends command", e);
         }
     }
 
