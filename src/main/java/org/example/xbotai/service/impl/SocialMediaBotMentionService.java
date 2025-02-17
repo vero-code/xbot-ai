@@ -19,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 public class SocialMediaBotMentionService {
@@ -150,11 +153,32 @@ public class SocialMediaBotMentionService {
             trendsCommandResponder.askCountryForTrends(tweetId, text);
         } else if (text.toLowerCase().contains("country") && text.contains(botMention)){
             logger.info("Detected 'country' command in tweet: {}", text);
-            String country = SocialMediaCommandParser.parseNextWordAfter(text, "country");
-            if (country != null) {
-                logger.info("User specified country: {}", country);
+            String userCountry = SocialMediaCommandParser.parseNextWordAfter(text, "country");
+
+            if (userCountry != null) {
+                userCountry = userCountry.toLowerCase().trim();
+                userCountry = userCountry.replaceAll("\\s+", "_");
+
+                if (!userCountry.equals("canada") && !userCountry.equals("united_states")) {
+                    logger.info("Invalid country specified, using default 'united_states'");
+                    userCountry = "united_states";
+                }
+                logger.info("User specified country: {}", userCountry);
             } else {
-                logger.info("No word found after 'country'.");
+                logger.info("No word found after 'country', using default 'united_states'");
+                userCountry = "united_states";
+            }
+
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                String url = "http://localhost:8080/api/bot/trends?country=" + userCountry;
+                logger.info("Sending request to URL: {}", url);
+                List<String> trends = restTemplate.getForObject(url, List.class);
+                logger.info("Trends received: {}", trends);
+
+                trendsCommandResponder.displayTrends(tweetId, trends);
+            } catch (Exception e) {
+                logger.error("Error calling trends API", e);
             }
         } else {
             logger.info("Tweet does not contain required command, skipping: {}", text);
