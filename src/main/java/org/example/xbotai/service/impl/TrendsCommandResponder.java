@@ -35,12 +35,13 @@ public class TrendsCommandResponder {
     public void displayTrends(String tweetId, List<String> trends) {
         try {
             String trendsString = String.join(",", trends);
-            String botAnswer = "Choose trend: " + trendsString;
 
-            int maxLength = 280;
-            if (botAnswer.length() > maxLength) {
-                botAnswer = botAnswer.substring(0, maxLength);
+            int maxLength = 277;
+            if (trendsString.length() > maxLength) {
+                trendsString = trendsString.substring(0, maxLength);
             }
+
+            String botAnswer = trendsString + "...";
 
             String postResponse = socialMediaService.postBotReplyTweet(botAnswer, tweetId, false);
             logger.info("Reply posted for tweet ID {}. Response: {}", tweetId, postResponse);
