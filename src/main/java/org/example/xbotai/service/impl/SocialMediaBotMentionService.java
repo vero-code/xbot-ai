@@ -21,7 +21,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SocialMediaBotMentionService {
@@ -62,7 +64,7 @@ public class SocialMediaBotMentionService {
     @Scheduled(fixedDelay = 900000)
     public void pollMentions() {
         try {
-            String botId = getUserId(socialMediaBotProperties.getUsername());
+            String botId = socialMediaBotProperties.getUserID();
             String url = "https://api.twitter.com/2/users/" + botId + "/mentions?tweet.fields=author_id";
             if (lastSeenMentionId != null) {
                 url += "&since_id=" + lastSeenMentionId;
@@ -141,8 +143,9 @@ public class SocialMediaBotMentionService {
             return;
         }
 
-        String userIdSilently = getUserIdSilently(socialMediaUserProperties.getUsername());
-        if (!tweetAuthorId.equals(userIdSilently)) {
+        String userId = socialMediaUserProperties.getUserID();
+
+        if (!tweetAuthorId.equals(userId)) {
             logger.info("Skipping tweet not sent by selected user. Tweet author_id: {}", tweetAuthorId);
             return;
         }
@@ -153,11 +156,9 @@ public class SocialMediaBotMentionService {
             trendsCommandResponder.askCountryForTrends(tweetId, text);
         } else if (text.toLowerCase().contains("country") && text.contains(botMention)){
             logger.info("Detected 'country' command in tweet: {}", text);
-            String userCountry = SocialMediaCommandParser.parseNextWordAfter(text, "country");
-
+            String userCountry = SocialMediaCommandParser.parseAllWordsAfterAsOne(text, "country");
+            logger.info("userCountry: {}", userCountry);
             if (userCountry != null) {
-                userCountry = userCountry.toLowerCase().trim();
-                userCountry = userCountry.replaceAll("\\s+", "_");
 
                 if (!userCountry.equals("canada") && !userCountry.equals("united_states")) {
                     logger.info("Invalid country specified, using default 'united_states'");
@@ -179,6 +180,35 @@ public class SocialMediaBotMentionService {
                 trendsCommandResponder.displayTrends(tweetId, trends);
             } catch (Exception e) {
                 logger.error("Error calling trends API", e);
+            }
+        } else if (text.toLowerCase().contains("trend") && text.contains(botMention)) {
+            logger.info("Detected 'trend' command in tweet: {}", text);
+
+            String selectedTrend = SocialMediaCommandParser.parseAllWordsAfter(text, "trend");
+            logger.info("userTrend: {}", selectedTrend);
+
+            if (selectedTrend == null) {
+                logger.info("Invalid trend specified, using default 'Hello world'");
+                selectedTrend = "Hello world";
+            }
+
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                String url = "http://localhost:8080/api/bot/select-trend";
+                Map<String, String> requestBody = new HashMap<>();
+                requestBody.put("userId", userId);
+                requestBody.put("trend", selectedTrend);
+                String response = restTemplate.postForObject(url, requestBody, String.class);
+                logger.info("Select trend response: {}", response);
+
+                String generateTweetUrl = "http://localhost:8080/api/bot/generate-tweet?userId=" + userId;
+                String generatedTweetResponse = restTemplate.getForObject(generateTweetUrl, String.class);
+                logger.info("Generated tweet: {}", generatedTweetResponse);
+
+                String botAnswer = "Confirm: " + generatedTweetResponse;
+                trendsCommandResponder.displayGeneratedTweet(tweetId, botAnswer);
+            } catch (Exception e) {
+                logger.error("Error calling trend selection/generation API", e);
             }
         } else {
             logger.info("Tweet does not contain required command, skipping: {}", text);

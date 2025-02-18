@@ -48,4 +48,17 @@ public class TrendsCommandResponder {
             logger.error("Error processing trends command", e);
         }
     }
+
+    public void displayGeneratedTweet(String tweetId, String generatedTweetResponse) {
+        try {
+            int maxLength = 280;
+            if (generatedTweetResponse.length() > maxLength) {
+                generatedTweetResponse = generatedTweetResponse.substring(0, maxLength);
+            }
+            String postResponse = socialMediaService.postBotReplyTweet(generatedTweetResponse, tweetId, false);
+            logger.info("Reply posted for tweet ID {}. Response: {}", tweetId, postResponse);
+        } catch (Exception e) {
+            logger.error("Error processing trend command", e);
+        }
+    }
 }

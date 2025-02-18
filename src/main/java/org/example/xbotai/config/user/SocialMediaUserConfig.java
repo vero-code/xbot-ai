@@ -22,6 +22,9 @@ public class SocialMediaUserConfig {
     @Value("${x.user.username}")
     private String username;
 
+    @Value("${x.user.userId}")
+    private String userID;
+
     @Bean(name = "userProperties")
     public SocialMediaUserProperties xProperties() {
         SocialMediaUserProperties properties = new SocialMediaUserProperties();
@@ -30,6 +33,7 @@ public class SocialMediaUserConfig {
         properties.setAccessToken(accessToken);
         properties.setAccessTokenSecret(accessTokenSecret);
         properties.setUsername(username);
+        properties.setUserID(userID);
         return properties;
     }
 }

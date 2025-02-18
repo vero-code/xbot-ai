@@ -22,6 +22,9 @@ public class SocialMediaBotConfig {
     @Value("${x.bot.username}")
     private String username;
 
+    @Value("${x.bot.userId}")
+    private String userID;
+
     @Bean(name = "botProperties")
     public SocialMediaBotProperties xProperties() {
         SocialMediaBotProperties properties = new SocialMediaBotProperties();
@@ -30,6 +33,7 @@ public class SocialMediaBotConfig {
         properties.setAccessToken(accessToken);
         properties.setAccessTokenSecret(accessTokenSecret);
         properties.setUsername(username);
+        properties.setUserID(userID);
         return properties;
     }
 }

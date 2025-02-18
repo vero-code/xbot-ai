@@ -43,7 +43,6 @@ public class BotController {
         return "Trend '" + trend + "' selected for user " + userId;
     }
 
-
     @GetMapping("/generate-tweet")
     public String generateTweet(@RequestParam String userId) {
         String selectedTrend = userSelectedTrends.get(userId);
@@ -55,7 +54,7 @@ public class BotController {
         String generatedTweet = aiService.generateTweet(selectedTrend);
         userGeneratedTweets.put(userId, generatedTweet);
 
-        return "Generated tweet: \"" + generatedTweet + "\". Please confirm to post.";
+        return generatedTweet;
     }
 
     @PostMapping("/confirm-tweet")

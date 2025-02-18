@@ -24,16 +24,12 @@ public class AIServiceImpl implements AIService {
         JSONObject requestBody = new JSONObject()
                 .put("contents", new JSONArray().put(new JSONObject()
                         .put("parts", new JSONArray().put(new JSONObject()
-                                .put("text", "Create an interesting and relevant tweet on the topic '" + trend + "' up to 280 characters long.")))));
+                                .put("text", "Create an interesting and relevant tweet on the topic '" + trend + "' up to 200 characters long.")))));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
-
-        System.out.println("Request URL: " + apiUrl + "?key=" + apiKey);
-        System.out.println("Request Body: " + requestBody.toString());
-
         ResponseEntity<String> response = restTemplate.postForEntity(apiUrl + "?key=" + apiKey, request, String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
