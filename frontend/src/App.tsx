@@ -4,6 +4,7 @@ import {AuthProvider} from "./contexts/AuthContext.tsx";
 import LoginLayout from "./layouts/auth/LoginLayout.tsx";
 import ProtectedRoute from "./routes/ProtectedRoute.tsx";
 import HomeLayout from "./layouts/HomeLayout.tsx";
+import RegisterLayout from "./layouts/auth/RegisterLayout.tsx";
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
         <AuthProvider>
             <Routes>
                 <Route path="/login" element={<LoginLayout />} />
+                <Route path="/register" element={<RegisterLayout />} />
 
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<HomeLayout />} />
@@ -22,4 +24,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

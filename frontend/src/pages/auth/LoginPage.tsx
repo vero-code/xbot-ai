@@ -38,11 +38,11 @@ const LoginPage: React.FC = () => {
             <form onSubmit={handleLogin}>
                 <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
                 <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                <button type="submit">Log in</button>
+                <button type="submit">Login</button>
             </form>
 
             <p>
-                Don't have an account? <Link to="/register">Register</Link>
+                Have not account yet? <Link to="/register">Sign Up</Link>
             </p>
         </div>
     );

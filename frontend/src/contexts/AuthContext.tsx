@@ -14,8 +14,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token && window.location.pathname !== "/login") {
-            console.warn("🔒 User is not authenticated, redirecting to login...");
+        if (!token && window.location.pathname !== "/login" && window.location.pathname !== "/register") {
             navigate("/login");
         }
     }, [token, navigate]);
