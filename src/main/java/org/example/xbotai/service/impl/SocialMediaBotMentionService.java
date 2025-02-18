@@ -205,8 +205,19 @@ public class SocialMediaBotMentionService {
                 String generatedTweetResponse = restTemplate.getForObject(generateTweetUrl, String.class);
                 logger.info("Generated tweet: {}", generatedTweetResponse);
 
-                String botAnswer = "Confirm: " + generatedTweetResponse;
-                trendsCommandResponder.displayGeneratedTweet(tweetId, botAnswer);
+                try {
+                    String urlPostTweet = "http://localhost:8080/api/bot/post-tweet";
+                    Map<String, String> requestBodyPostTweet = new HashMap<>();
+                    requestBodyPostTweet.put("userId", userId);
+                    requestBodyPostTweet.put("tweet", generatedTweetResponse);
+                    String responsePostTweet = restTemplate.postForObject(urlPostTweet, requestBodyPostTweet, String.class);
+                    logger.info("Post tweet response: {}", responsePostTweet);
+
+                    String botAnswer = "The tweet was posted on your behalf. Contact me again!";
+                    trendsCommandResponder.displayGeneratedTweet(tweetId, botAnswer);
+                } catch (Exception e) {
+                    logger.error("Error calling confirm tweet API", e);
+                }
             } catch (Exception e) {
                 logger.error("Error calling trend selection/generation API", e);
             }

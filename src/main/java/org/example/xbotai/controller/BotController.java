@@ -1,6 +1,7 @@
 package org.example.xbotai.controller;
 
 import org.example.xbotai.dto.TrendSelectionRequest;
+import org.example.xbotai.dto.TweetGenerationRequest;
 import org.example.xbotai.service.AIService;
 import org.example.xbotai.service.SocialMediaService;
 import org.example.xbotai.service.TrendService;
@@ -73,5 +74,19 @@ public class BotController {
             userGeneratedTweets.remove(userId);
             return "Tweet posting canceled.";
         }
+    }
+
+    @PostMapping("/post-tweet")
+    public String postTweet(@RequestBody TweetGenerationRequest request) {
+        String userId = request.userId();
+        String tweetToPost = request.tweet();
+
+        if (tweetToPost == null) {
+            return "No tweet generated to confirm. Please generate a tweet first.";
+        }
+
+        String response = socialMediaService.postUserTweet(tweetToPost, true);
+        userGeneratedTweets.remove(userId);
+        return response;
     }
 }
