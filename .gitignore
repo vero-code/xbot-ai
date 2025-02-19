@@ -36,8 +36,7 @@ build/
 /src/main/resources/application-local.properties
 
 ### Data ###
-/data/*.mv.db
-/data/*.h2.db
+.data/
 
 ### Node.js ###
 /blockchain/node_modules/
