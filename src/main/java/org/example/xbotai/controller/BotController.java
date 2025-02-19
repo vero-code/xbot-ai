@@ -2,9 +2,9 @@ package org.example.xbotai.controller;
 
 import org.example.xbotai.dto.TrendSelectionRequest;
 import org.example.xbotai.dto.TweetGenerationRequest;
-import org.example.xbotai.service.AIService;
-import org.example.xbotai.service.SocialMediaService;
-import org.example.xbotai.service.TrendService;
+import org.example.xbotai.service.core.AIService;
+import org.example.xbotai.service.core.SocialMediaService;
+import org.example.xbotai.service.core.TrendService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;

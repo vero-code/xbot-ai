@@ -1,4 +1,4 @@
-package org.example.xbotai.service.impl;
+package org.example.xbotai.service.ui.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.xbotai.model.User;

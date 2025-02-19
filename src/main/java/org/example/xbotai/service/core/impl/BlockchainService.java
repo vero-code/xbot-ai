@@ -1,4 +1,4 @@
-package org.example.xbotai.service.impl;
+package org.example.xbotai.service.core.impl;
 
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;

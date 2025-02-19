@@ -1,4 +1,4 @@
-package org.example.xbotai.service;
+package org.example.xbotai.service.core;
 
 import java.util.List;
 

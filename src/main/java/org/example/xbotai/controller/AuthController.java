@@ -7,7 +7,7 @@ import org.example.xbotai.dto.auth.AuthResponse;
 import org.example.xbotai.dto.auth.LoginRequest;
 import org.example.xbotai.dto.UserDto;
 import org.example.xbotai.jwt.JwtTokenProvider;
-import org.example.xbotai.service.UserService;
+import org.example.xbotai.service.ui.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

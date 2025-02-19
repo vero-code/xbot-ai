@@ -1,4 +1,4 @@
-package org.example.xbotai.service.impl;
+package org.example.xbotai.service.core.impl;
 
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
@@ -8,7 +8,7 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import org.example.xbotai.config.SocialMediaProperties;
-import org.example.xbotai.service.SocialMediaService;
+import org.example.xbotai.service.core.SocialMediaService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 

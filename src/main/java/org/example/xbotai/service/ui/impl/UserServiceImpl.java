@@ -1,4 +1,4 @@
-package org.example.xbotai.service.impl;
+package org.example.xbotai.service.ui.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,7 @@ import org.example.xbotai.dto.UserDto;
 import org.example.xbotai.mapper.UserMapper;
 import org.example.xbotai.model.User;
 import org.example.xbotai.repository.UserRepository;
-import org.example.xbotai.service.UserService;
+import org.example.xbotai.service.ui.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

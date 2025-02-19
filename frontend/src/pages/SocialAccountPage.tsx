@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../styles/SocialAccountPage.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const token = localStorage.getItem("token");
 
@@ -18,6 +19,8 @@ const SocialAccountPage: React.FC = () => {
     const [accessToken, setAccessToken] = useState("");
     const [accessTokenSecret, setAccessTokenSecret] = useState("");
     const [message, setMessage] = useState<string | null>(null);
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -116,6 +119,7 @@ const SocialAccountPage: React.FC = () => {
                         />
                     </div>
                     <button type="submit" className="submit-button">Save Settings</button>
+                    <button onClick={() => navigate("/")}>⬅ Back</button>
                 </form>
                 {message && <p>{message}</p>}
             </main>

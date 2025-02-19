@@ -1,6 +1,6 @@
-package org.example.xbotai.service.impl;
+package org.example.xbotai.service.core.impl;
 
-import org.example.xbotai.service.SocialMediaService;
+import org.example.xbotai.service.core.SocialMediaService;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

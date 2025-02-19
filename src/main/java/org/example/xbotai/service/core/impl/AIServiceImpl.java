@@ -1,6 +1,6 @@
-package org.example.xbotai.service.impl;
+package org.example.xbotai.service.core.impl;
 
-import org.example.xbotai.service.AIService;
+import org.example.xbotai.service.core.AIService;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

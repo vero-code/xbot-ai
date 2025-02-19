@@ -1,6 +1,6 @@
-package org.example.xbotai.service.impl;
+package org.example.xbotai.service.core.impl;
 
-import org.example.xbotai.service.TrendService;
+import org.example.xbotai.service.core.TrendService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
