@@ -1,5 +1,14 @@
 import React, { useState } from "react";
 import "../styles/SocialAccountPage.css";
+import axios from "axios";
+
+const token = localStorage.getItem("token");
+
+const config = {
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
+};
 
 const SocialAccountPage: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -8,18 +17,31 @@ const SocialAccountPage: React.FC = () => {
     const [apiSecretKey, setApiSecretKey] = useState("");
     const [accessToken, setAccessToken] = useState("");
     const [accessTokenSecret, setAccessTokenSecret] = useState("");
+    const [message, setMessage] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: Implement sending data to the server
-        console.log({
+        const data = {
             username,
             userId,
             apiKey,
             apiSecretKey,
             accessToken,
             accessTokenSecret,
-        });
+        };
+
+        try {
+            const response = await axios.post("http://localhost:8080/api/social-account/save", data, config);
+            setMessage("Settings saved successfully!");
+            console.log(response.data);
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                console.error("Error saving settings", error.message);
+            } else {
+                console.error("Error saving settings", error);
+            }
+            setMessage("Error saving settings. Please try again.");
+        }
     };
 
     return (
@@ -95,6 +117,7 @@ const SocialAccountPage: React.FC = () => {
                     </div>
                     <button type="submit" className="submit-button">Save Settings</button>
                 </form>
+                {message && <p>{message}</p>}
             </main>
         </div>
     );
