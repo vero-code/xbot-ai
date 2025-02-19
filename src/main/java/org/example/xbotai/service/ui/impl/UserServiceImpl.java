@@ -7,6 +7,7 @@ import org.example.xbotai.mapper.UserMapper;
 import org.example.xbotai.model.User;
 import org.example.xbotai.repository.UserRepository;
 import org.example.xbotai.service.ui.UserService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,13 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
 
         return Optional.of(userMapper.toDto(savedUser));
+    }
+
+    @Override
+    public Long getUserIdByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username))
+                .getId();
     }
 
     @Override

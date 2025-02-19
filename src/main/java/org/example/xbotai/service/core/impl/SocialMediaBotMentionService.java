@@ -1,4 +1,4 @@
-package org.example.xbotai.service.impl;
+package org.example.xbotai.service.core.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,9 +10,9 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import org.example.xbotai.config.bot.SocialMediaBotProperties;
-import org.example.xbotai.config.user.SocialMediaUserProperties;
-import org.example.xbotai.service.SocialMediaService;
-import org.example.xbotai.service.TrendService;
+import org.example.xbotai.provider.SocialMediaUserPropertiesProvider;
+import org.example.xbotai.service.core.SocialMediaService;
+import org.example.xbotai.service.core.TrendService;
 import org.example.xbotai.util.SocialMediaCommandParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ import java.util.Map;
 @Service
 public class SocialMediaBotMentionService {
 
-    private final SocialMediaUserProperties socialMediaUserProperties;
+    private final SocialMediaUserPropertiesProvider propertiesProvider;
     private final SocialMediaBotProperties socialMediaBotProperties;
     private final OAuth10aService oAuthService;
     private final OAuth1AccessToken accessToken;
@@ -39,12 +39,13 @@ public class SocialMediaBotMentionService {
     private final TrendsCommandResponder trendsCommandResponder;
     private String lastSeenMentionId = null;
 
-    public SocialMediaBotMentionService(@Qualifier("userProperties") SocialMediaUserProperties socialMediaUserProperties,
+    public SocialMediaBotMentionService(
+                                     SocialMediaUserPropertiesProvider propertiesProvider,
                                      @Qualifier("botProperties") SocialMediaBotProperties socialMediaBotProperties,
                                      SocialMediaService socialMediaService,
                                      TrendService trendService,
                                      TrendsCommandResponder trendsCommandResponder) {
-        this.socialMediaUserProperties = socialMediaUserProperties;
+        this.propertiesProvider = propertiesProvider;
         this.socialMediaBotProperties = socialMediaBotProperties;
         this.socialMediaService = socialMediaService;
         this.trendService = trendService;
@@ -143,7 +144,7 @@ public class SocialMediaBotMentionService {
             return;
         }
 
-        String userId = socialMediaUserProperties.getUserID();
+        String userId = propertiesProvider.getPropertiesForCurrentUser().getUserID();
 
         if (!tweetAuthorId.equals(userId)) {
             logger.info("Skipping tweet not sent by selected user. Tweet author_id: {}", tweetAuthorId);
