@@ -6,6 +6,7 @@ import ProtectedRoute from "./routes/ProtectedRoute.tsx";
 import HomeLayout from "./layouts/HomeLayout.tsx";
 import RegisterLayout from "./layouts/auth/RegisterLayout.tsx";
 import SocialAccountLayout from "./layouts/SocialAccountLayout.tsx";
+import BlockchainConsoleLayout from "./layouts/BlockchainConsoleLayout.tsx";
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<HomeLayout />} />
                     <Route path="/social-account" element={<SocialAccountLayout />} />
+                    <Route path="/blockchain-console" element={<BlockchainConsoleLayout />} />
                 </Route>
             </Routes>
         </AuthProvider>

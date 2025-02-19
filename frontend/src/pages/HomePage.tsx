@@ -11,6 +11,7 @@ const HomePage: React.FC = () => {
                     <p>AI agent that creates tweets using and logs them into the blockchain.</p>
 
                     <p>Connect <Link to="/social-account">account X</Link></p>
+                    <p>Go to <Link to="/blockchain-console">NEAR console</Link></p>
                 </div>
             </header>
         </div>
