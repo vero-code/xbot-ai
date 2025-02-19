@@ -29,7 +29,7 @@ const RegisterPage: React.FC = () => {
                 password
             });
 
-            setSuccess("You have successfully registered.");
+            setSuccess("You have successfully registered. Redirect to login...");
             setTimeout(() => navigate("/login"), 2000);
         } catch (error) {
             console.error("You were unable to register:", error);

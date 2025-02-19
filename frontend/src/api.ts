@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
+    baseURL: "http://localhost:5173/api",
 });
 
 API.interceptors.request.use((config) => {
@@ -11,7 +11,7 @@ API.interceptors.request.use((config) => {
         config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
     } else {
-        console.warn("⚠️ No token found in localStorage!");
+        console.warn("No token found in localStorage!");
     }
     return config;
 }, (error) => {
@@ -22,7 +22,7 @@ API.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            console.warn("🚨 Token expired. Logging out...");
+            console.warn("Token expired. Logging out...");
             localStorage.removeItem("token");
             window.location.href = "/login";
         }
