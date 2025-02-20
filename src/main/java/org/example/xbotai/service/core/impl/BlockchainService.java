@@ -43,7 +43,7 @@ public class BlockchainService {
             ProcessBuilder processBuilder = new ProcessBuilder(
                     "node", "./blockchain/near-logger.js"
             );
-            processBuilder.redirectErrorStream(true);
+
             Process process = processBuilder.start();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

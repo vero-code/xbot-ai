@@ -31,13 +31,12 @@ async function addLog(tweet) {
         gas: '30000000000000',
         amount: '0'
     });
-    console.log('Tweet added to blockchain:', tweet);
 }
 
 async function getLogs() {
     const { contract } = await connectToNear();
     const logs = await contract.getLogs();
-    console.log('Logs from blockchain:', logs);
+    console.log(JSON.stringify(logs));
     return logs;
 }
 
@@ -49,6 +48,5 @@ module.exports = { addLog, getLogs };
         await addLog(args[0]);
     } else {
         const logs = await getLogs();
-        console.log('Retrieved logs:', logs);
     }
 })();
