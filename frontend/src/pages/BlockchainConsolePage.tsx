@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import '../styles/BlockchainConsolePage.css';
+import {useNavigate} from "react-router-dom";
+import API from "../api.ts";
 
 const BlockchainConsolePage: React.FC = () => {
     const [logs, setLogs] = useState<string[]>([]);
     const [message, setMessage] = useState<string>('');
 
+    const navigate = useNavigate();
+
     const fetchLogs = async () => {
         try {
-            const response = await axios.get('/api/blockchain/logs');
+            const response = await API.get('/blockchain/logs');
             setLogs(response.data);
         } catch (error) {
             console.error("Error fetching logs", error);
@@ -37,6 +40,7 @@ const BlockchainConsolePage: React.FC = () => {
                     </ul>
                 )}
             </section>
+            <button onClick={() => navigate("/")}>⬅ Back</button>
         </div>
     );
 };

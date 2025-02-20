@@ -46,6 +46,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return false;
+        String uri = request.getRequestURI();
+        return uri.startsWith("/h2-console") ||
+                uri.startsWith("/favicon.ico") ||
+                uri.startsWith("/api/blockchain/logs");
     }
 }

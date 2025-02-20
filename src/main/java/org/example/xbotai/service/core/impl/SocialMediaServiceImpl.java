@@ -8,6 +8,7 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import org.example.xbotai.config.SocialMediaProperties;
+import org.example.xbotai.provider.SocialMediaUserPropertiesProvider;
 import org.example.xbotai.service.core.SocialMediaService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SocialMediaServiceImpl implements SocialMediaService {
 
-    private final SocialMediaProperties socialMediaUserProperties;
+    private final SocialMediaUserPropertiesProvider propertiesProvider;
 
     private final SocialMediaProperties socialMediaBotProperties;
 
@@ -24,9 +25,9 @@ public class SocialMediaServiceImpl implements SocialMediaService {
     private static final String TWEET_ENDPOINT = "https://api.twitter.com/2/tweets";
 
     public SocialMediaServiceImpl(@Qualifier("botProperties")SocialMediaProperties socialMediaBotProperties,
-                                  @Qualifier("userProperties") SocialMediaProperties socialMediaUserProperties,
+                                  SocialMediaUserPropertiesProvider propertiesProvider,
                                   BlockchainService blockchainService) {
-        this.socialMediaUserProperties = socialMediaUserProperties;
+        this.propertiesProvider = propertiesProvider;
         this.socialMediaBotProperties = socialMediaBotProperties;
         this.blockchainService = blockchainService;
     }
@@ -44,7 +45,8 @@ public class SocialMediaServiceImpl implements SocialMediaService {
      */
     @Override
     public String postUserTweet(String tweetContent, boolean logToBlockchain) {
-        return doPostTweet(socialMediaUserProperties, tweetContent, logToBlockchain);
+        SocialMediaProperties userProperties = propertiesProvider.getPropertiesForCurrentUser();
+        return doPostTweet(userProperties, tweetContent, logToBlockchain);
     }
 
     /**

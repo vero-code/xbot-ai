@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import "../styles/SocialAccountPage.css";
-import axios from "axios";
+import API from "../api.ts";
 import { useNavigate } from "react-router-dom";
-
-const token = localStorage.getItem("token");
-
-const config = {
-    headers: {
-        Authorization: `Bearer ${token}`
-    }
-};
 
 const SocialAccountPage: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -24,6 +16,19 @@ const SocialAccountPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login");
+            return;
+        }
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+
         const data = {
             username,
             userId,
@@ -34,15 +39,15 @@ const SocialAccountPage: React.FC = () => {
         };
 
         try {
-            const response = await axios.post("http://localhost:8080/api/social-account/save", data, config);
+            const response = await API.post("/social-account/save", data, config);
             setMessage("Settings saved successfully!");
             console.log(response.data);
         } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                console.error("Error saving settings", error.message);
-            } else {
-                console.error("Error saving settings", error);
+            let errorMessage = "Unknown error";
+            if (error instanceof Error) {
+                errorMessage = error.message;
             }
+            console.error("Error saving settings:", errorMessage);
             setMessage("Error saving settings. Please try again.");
         }
     };
@@ -119,7 +124,7 @@ const SocialAccountPage: React.FC = () => {
                         />
                     </div>
                     <button type="submit" className="submit-button">Save Settings</button>
-                    <button onClick={() => navigate("/")}>⬅ Back</button>
+                    <button type="button" onClick={() => navigate("/")}>⬅ Back</button>
                 </form>
                 {message && <p>{message}</p>}
             </main>

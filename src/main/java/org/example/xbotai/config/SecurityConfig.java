@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login", "/api/auth/register"
                         ).permitAll()
+                        .requestMatchers("/api/blockchain/logs").permitAll()
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(request -> {

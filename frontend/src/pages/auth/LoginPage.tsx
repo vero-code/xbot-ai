@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
 
             window.location.href = "/";
         } catch (error) {
-            console.error("❌ LoginPage error:", error);
+            console.error("LoginPage error:", error);
             setError("Invalid username or password");
         }
     };
