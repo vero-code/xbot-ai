@@ -36,7 +36,12 @@ async function addLog(tweet) {
 async function getLogs() {
     const { contract } = await connectToNear();
     const logs = await contract.getLogs();
-    console.log(JSON.stringify(logs));
+
+    const formattedLogs = logs
+        .map(log => `Tweet: ${log.tweet}, Timestamp: ${log.timestamp}`)
+        .join("\n");
+
+    console.log(formattedLogs);
     return logs;
 }
 
