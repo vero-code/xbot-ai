@@ -1,7 +1,10 @@
 import React from 'react';
 import '../styles/DocumentationPage.css';
+import {useNavigate} from "react-router-dom";
 
 const DocumentationPage: React.FC = () => {
+    const navigate = useNavigate();
+
     return (
         <div className="documentation-container">
             <header className="documentation-header">
@@ -56,6 +59,7 @@ npm start`}
                         This section contains answers to frequently asked questions. If you have any further questions, please contact support.
                     </p>
                 </section>
+                <button onClick={() => navigate("/")}>⬅ Back</button>
             </main>
 
             <footer className="documentation-footer">
