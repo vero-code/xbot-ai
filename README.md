@@ -171,7 +171,7 @@
 * Post:
 
    ```
-   @xbot_ai trends
+   @xbot_ai_ trends
    ```
 
 * The bot responds:

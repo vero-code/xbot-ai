@@ -15,7 +15,8 @@ const HomePage: React.FC = () => {
                 </div>
             </header>
 
-            <p>Connect <Link to="/social-account">account X</Link></p>
+            <p>Connect <Link to="/social-account">your account X</Link></p>
+            <p>Connect <Link to="/bot-social-account">bot account X</Link></p>
             <p>Go to <Link to="/blockchain-console">NEAR console</Link></p>
             <p>Read <Link to="/documentation">documentation</Link></p>
 

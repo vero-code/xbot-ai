@@ -8,6 +8,7 @@ import RegisterLayout from "./layouts/auth/RegisterLayout.tsx";
 import SocialAccountLayout from "./layouts/SocialAccountLayout.tsx";
 import BlockchainConsoleLayout from "./layouts/BlockchainConsoleLayout.tsx";
 import DocumentationLayout from "./layouts/DocumentationLayout.tsx";
+import BotSocialAccountLayout from "./layouts/BotSocialAccountLayout.tsx";
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<HomeLayout />} />
                     <Route path="/social-account" element={<SocialAccountLayout />} />
+                    <Route path="/bot-social-account" element={<BotSocialAccountLayout />} />
                     <Route path="/blockchain-console" element={<BlockchainConsoleLayout />} />
                     <Route path="/documentation" element={<DocumentationLayout />} />
                 </Route>
