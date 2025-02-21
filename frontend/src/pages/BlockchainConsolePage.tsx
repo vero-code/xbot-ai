@@ -6,6 +6,7 @@ import API from "../api.ts";
 const BlockchainConsolePage: React.FC = () => {
     const [logs, setLogs] = useState<string[]>([]);
     const [message, setMessage] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const navigate = useNavigate();
 
@@ -16,6 +17,8 @@ const BlockchainConsolePage: React.FC = () => {
         } catch (error) {
             console.error("Error fetching logs", error);
             setMessage("Error fetching logs");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -30,7 +33,9 @@ const BlockchainConsolePage: React.FC = () => {
 
             <section className="log-section">
                 <h2>Logs</h2>
-                {logs.length === 0 ? (
+                {isLoading ? (
+                    <p>Loading logs...</p>
+                ) : logs.length === 0 ? (
                     <p>No logs found.</p>
                 ) : (
                     <ul>
