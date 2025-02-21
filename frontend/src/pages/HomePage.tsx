@@ -12,6 +12,7 @@ const HomePage: React.FC = () => {
 
                     <p>Connect <Link to="/social-account">account X</Link></p>
                     <p>Go to <Link to="/blockchain-console">NEAR console</Link></p>
+                    <p>Read <Link to="/documentation">documentation</Link></p>
                 </div>
             </header>
         </div>
