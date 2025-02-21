@@ -1,6 +1,4 @@
-package org.example.xbotai.config.user;
-
-import org.example.xbotai.config.SocialMediaProperties;
+package org.example.xbotai.config;
 
 public class SocialMediaUserProperties implements SocialMediaProperties {
 

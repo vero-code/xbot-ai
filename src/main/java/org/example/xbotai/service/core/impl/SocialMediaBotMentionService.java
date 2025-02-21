@@ -9,14 +9,14 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
-import org.example.xbotai.config.bot.SocialMediaBotProperties;
+import org.example.xbotai.config.SocialMediaProperties;
+import org.example.xbotai.provider.SocialMediaBotPropertiesProvider;
 import org.example.xbotai.provider.SocialMediaUserPropertiesProvider;
 import org.example.xbotai.service.core.SocialMediaService;
 import org.example.xbotai.service.core.TrendService;
 import org.example.xbotai.util.SocialMediaCommandParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -29,33 +29,42 @@ import java.util.Map;
 public class SocialMediaBotMentionService {
 
     private final SocialMediaUserPropertiesProvider propertiesProvider;
-    private final SocialMediaBotProperties socialMediaBotProperties;
-    private final OAuth10aService oAuthService;
-    private final OAuth1AccessToken accessToken;
+    private final SocialMediaBotPropertiesProvider botPropertiesProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final SocialMediaService socialMediaService;
     private final TrendService trendService;
-    private final Logger logger = LoggerFactory.getLogger(SocialMediaBotMentionService.class);
     private final TrendsCommandResponder trendsCommandResponder;
+    private final Logger logger = LoggerFactory.getLogger(SocialMediaBotMentionService.class);
+
+    private OAuth10aService oAuthService;
+    private OAuth1AccessToken accessToken;
     private String lastSeenMentionId = null;
 
     public SocialMediaBotMentionService(
                                      SocialMediaUserPropertiesProvider propertiesProvider,
-                                     @Qualifier("botProperties") SocialMediaBotProperties socialMediaBotProperties,
+                                     SocialMediaBotPropertiesProvider botPropertiesProvider,
                                      SocialMediaService socialMediaService,
                                      TrendService trendService,
                                      TrendsCommandResponder trendsCommandResponder) {
         this.propertiesProvider = propertiesProvider;
-        this.socialMediaBotProperties = socialMediaBotProperties;
+        this.botPropertiesProvider = botPropertiesProvider;
         this.socialMediaService = socialMediaService;
         this.trendService = trendService;
         this.trendsCommandResponder = trendsCommandResponder;
-        this.oAuthService = new ServiceBuilder(socialMediaBotProperties.getApiKey())
-                .apiSecret(socialMediaBotProperties.getApiSecretKey())
-                .build(TwitterApi.instance());
-        this.accessToken = new OAuth1AccessToken(
-                socialMediaBotProperties.getAccessToken(),
-                socialMediaBotProperties.getAccessTokenSecret());
+    }
+
+    private void initOAuthServiceIfNeeded() {
+        if (oAuthService == null || accessToken == null) {
+            try {
+                SocialMediaProperties props = botPropertiesProvider.getPropertiesForCurrentUser();
+                this.oAuthService = new ServiceBuilder(props.getApiKey())
+                        .apiSecret(props.getApiSecretKey())
+                        .build(TwitterApi.instance());
+                this.accessToken = new OAuth1AccessToken(props.getAccessToken(), props.getAccessTokenSecret());
+            } catch (Exception e) {
+                logger.error("Failed to initialize OAuth service", e);
+            }
+        }
     }
 
     /**
@@ -64,8 +73,9 @@ public class SocialMediaBotMentionService {
      */
     @Scheduled(fixedDelay = 900000)
     public void pollMentions() {
+        initOAuthServiceIfNeeded();
         try {
-            String botId = socialMediaBotProperties.getUserID();
+            String botId = botPropertiesProvider.getPropertiesForCurrentUser().getUserID();
             String url = "https://api.twitter.com/2/users/" + botId + "/mentions?tweet.fields=author_id";
             if (lastSeenMentionId != null) {
                 url += "&since_id=" + lastSeenMentionId;
@@ -90,7 +100,7 @@ public class SocialMediaBotMentionService {
     private void fallbackToRecentSearch(String botId) {
         try {
             String fallbackUrl = "https://api.twitter.com/2/tweets/search/recent?query=%40"
-                    + socialMediaBotProperties.getUsername()
+                    + botPropertiesProvider.getPropertiesForCurrentUser().getUsername()
                     + "&max_results=10&tweet.fields=author_id";
             OAuthRequest fallbackRequest = createOAuthRequest(fallbackUrl);
             Response fallbackResponse = oAuthService.execute(fallbackRequest);
@@ -151,7 +161,7 @@ public class SocialMediaBotMentionService {
             return;
         }
 
-        String botMention = "@" + socialMediaBotProperties.getUsername();
+        String botMention = "@" + botPropertiesProvider.getPropertiesForCurrentUser().getUsername();
         if (text.toLowerCase().contains("trends") && text.contains(botMention)) {
             logger.info("Detected 'trends' command in tweet: {}", text);
             trendsCommandResponder.askCountryForTrends(tweetId, text);

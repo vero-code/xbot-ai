@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import "../styles/SocialAccountPage.css";
+import "../styles/SocialAccountBotPage.css";
 import API from "../api.ts";
 import { useNavigate } from "react-router-dom";
 
-const BotSocialAccountPage: React.FC = () => {
+const SocialAccountBotPage: React.FC = () => {
     const [username, setUsername] = useState("");
     const [userId, setUserId] = useState("");
     const [apiKey, setApiKey] = useState("");
@@ -39,7 +39,7 @@ const BotSocialAccountPage: React.FC = () => {
         };
 
         try {
-            const response = await API.post("/bot-social-account/save", data, config);
+            const response = await API.post("/social-account-bot/save", data, config);
             setMessage("Settings saved successfully!");
             console.log(response.data);
         } catch (error: unknown) {
@@ -132,4 +132,4 @@ const BotSocialAccountPage: React.FC = () => {
     );
 };
 
-export default BotSocialAccountPage;
+export default SocialAccountBotPage;

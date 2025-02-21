@@ -1,8 +1,8 @@
 package org.example.xbotai.provider;
 
-import org.example.xbotai.config.SocialMediaUserProperties;
-import org.example.xbotai.dto.SocialAccountDto;
-import org.example.xbotai.service.ui.SocialAccountService;
+import org.example.xbotai.config.SocialMediaBotProperties;
+import org.example.xbotai.dto.SocialAccountBotDto;
+import org.example.xbotai.service.ui.SocialAccountBotService;
 import org.example.xbotai.service.ui.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,18 +11,18 @@ import org.springframework.web.context.annotation.RequestScope;
 
 @Component
 @RequestScope
-public class SocialMediaUserPropertiesProvider {
+public class SocialMediaBotPropertiesProvider {
 
-    private final SocialAccountService socialAccountService;
+    private final SocialAccountBotService socialAccountBotService;
     private final UserService userService;
 
-    public SocialMediaUserPropertiesProvider(SocialAccountService socialAccountService,
-                                             UserService userService) {
-        this.socialAccountService = socialAccountService;
+    public SocialMediaBotPropertiesProvider(SocialAccountBotService socialAccountBotService,
+                                            UserService userService) {
+        this.socialAccountBotService = socialAccountBotService;
         this.userService = userService;
     }
 
-    public SocialMediaUserProperties getPropertiesForCurrentUser() {
+    public SocialMediaBotProperties getPropertiesForCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalStateException("No authenticated user found");
@@ -30,8 +30,8 @@ public class SocialMediaUserPropertiesProvider {
         String username = authentication.getName();
         Long userId = userService.getUserIdByUsername(username);
 
-        SocialAccountDto dto = socialAccountService.getSocialAccountByUserId(userId);
-        SocialMediaUserProperties props = new SocialMediaUserProperties();
+        SocialAccountBotDto dto = socialAccountBotService.getSocialAccountByUserId(userId);
+        SocialMediaBotProperties props = new SocialMediaBotProperties();
         props.setApiKey(dto.getApiKey());
         props.setApiSecretKey(dto.getApiSecretKey());
         props.setAccessToken(dto.getAccessToken());
