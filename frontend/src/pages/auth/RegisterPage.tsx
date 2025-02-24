@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import API from "../../api.ts";
+import "../../styles/auth/AuthPage.css";
+import "../../styles/Button.css";
 
 const RegisterPage: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -38,45 +40,70 @@ const RegisterPage: React.FC = () => {
     };
 
     return (
-        <div>
-            <h2>Register Form</h2>
-            {error && <p>{error}</p>}
+        <div className="auth-container">
+            <h2 className="auth-title">Register Form</h2>
+            {error && <p className="error-message">{error}</p>}
             {success && <p>{success}</p>}
             <form onSubmit={handleRegister}>
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Create account</button>
+                <div className="form-group">
+                    <i className="field-icon">👨🏻‍💻</i>
+                    <input
+                        className={`glass-input ${error ? "input-error" : ""}`}
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </div>
+
+                <div className="form-group">
+                    <i className="field-icon">✉️</i>
+                    <input
+                        className={`glass-input ${error ? "input-error" : ""}`}
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </div>
+
+                <div className="form-group">
+                    <i className="field-icon">🔒</i>
+                    <input
+                        className={`glass-input ${error ? "input-error" : ""}`}
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <i className="field-icon">🔒</i>
+                    <input
+                        className={`glass-input ${error ? "input-error" : ""}`}
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                    />
+                </div>
+
+                <button type="submit" className="main-btn action-btn">REGISTER</button>
+                <div className="form-text">
+                    <span>... or log in below 🔽 </span>
+                </div>
             </form>
 
-            <p>
-                Have already an account? <Link to="/login">Login here</Link>
-            </p>
+            <button
+                className="bottom-btn"
+                onClick={() => navigate("/login")}
+            >
+                LOGIN
+            </button>
         </div>
     );
 };

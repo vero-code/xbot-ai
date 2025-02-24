@@ -8,7 +8,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.login-container {
+.auth-container {
     background: rgba(255, 255, 255, 0.1);
     padding: 30px;
     border-radius: 20px;
@@ -18,27 +18,11 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.avatar {
-    width: 115px;
-    height: 115px;
-    border-radius: 50%;
-    margin: 0 auto 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+.auth-title {
+    color: rgba(255, 255, 255, 0.6);
 }
 
-.avatar-icon {
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    background-image: url("/logo.webp");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
+/* Form */
 .form-group {
     margin-bottom: 25px;
     position: relative;
@@ -81,7 +65,8 @@ body {
     font-size: 14px;
 }
 
-.register {
+/* Button */
+.bottom-btn {
     clear: both;
     text-align: center;
     width: 100%;
@@ -96,8 +81,39 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.register a {
+.bottom-btn a {
     color: #666;
     text-decoration: none;
     font-size: 14px;
+}
+
+.action-btn {
+    margin-top: 20px;
+}
+
+/* Error */
+.error-message {
+    color: #ea5b5b;
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: bold;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.input-error {
+    border: 2px solid red;
+    background: rgba(255, 0, 0, 0.1);
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    transition: all 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

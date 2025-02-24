@@ -22,7 +22,3 @@
     transform: translateY(1px);
     box-shadow: 0 3px 10px rgba(41, 128, 185, 0.2);
 }
-
-.login-btn {
-    margin-top: 20px;
-}

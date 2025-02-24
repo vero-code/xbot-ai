@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import API from "../../api.ts";
 import { useNavigate } from "react-router-dom";
-import "../../styles/AuthPage.css";
-import "../../styles/LoginPage.css";
+import "../../styles/auth/AuthPage.css";
+import "../../styles/auth/LoginPage.css";
 import "../../styles/Button.css";
 
 interface AuthResponse {
@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="login-container">
+        <div className="auth-container">
             <div className="avatar">
                 <div className="avatar-icon"></div>
             </div>
@@ -67,14 +67,14 @@ const LoginPage: React.FC = () => {
                     />
                 </div>
 
-                <button type="submit" className="main-btn login-btn">LOGIN</button>
+                <button type="submit" className="main-btn action-btn">LOGIN</button>
                 <div className="form-text">
                     <span>... or register below 🔽 </span>
                 </div>
             </form>
 
             <button
-                className="register"
+                className="bottom-btn"
                 onClick={() => navigate("/register")}
             >
                 REGISTER
