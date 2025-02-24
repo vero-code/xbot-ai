@@ -8,20 +8,6 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.auth-container {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 30px;
-    border-radius: 20px;
-    backdrop-filter: blur(8px);
-    width: 300px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.auth-title {
-    color: rgba(255, 255, 255, 0.6);
-}
-
 /* Form */
 .form-group {
     margin-bottom: 25px;

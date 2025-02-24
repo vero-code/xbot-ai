@@ -70,6 +70,7 @@ button:focus-visible {
   }
 }
 
+/* Input */
 .glass-input {
   font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   width: 100%;
@@ -92,4 +93,19 @@ button:focus-visible {
 .glass-input:focus {
   background: rgba(255, 255, 255, 0.3);
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Container */
+.glass-container {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  width: 300px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-title {
+  color: rgba(255, 255, 255, 0.6);
 }

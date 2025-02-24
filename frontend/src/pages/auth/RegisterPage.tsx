@@ -40,8 +40,8 @@ const RegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="auth-container">
-            <h2 className="auth-title">Register Form</h2>
+        <div className="glass-container">
+            <h2 className="glass-title">Register Form</h2>
             {error && <p className="error-message">{error}</p>}
             {success && <p>{success}</p>}
             <form onSubmit={handleRegister}>

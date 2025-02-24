@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../styles/SocialAccountBotPage.css";
 import API from "../api.ts";
 import { useNavigate } from "react-router-dom";
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/DocumentationPage.css';
+import '../styles/page/DocumentationPage.css';
 import {useNavigate} from "react-router-dom";
 
 const DocumentationPage: React.FC = () => {

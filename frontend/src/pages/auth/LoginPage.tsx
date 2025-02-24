@@ -37,9 +37,9 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="auth-container">
-            <div className="avatar">
-                <div className="avatar-icon"></div>
+        <div className="glass-container">
+            <div className="login-image-wrapper">
+                <div className="login-image"></div>
             </div>
 
             {error && <p className="error-message">{error}</p>}
