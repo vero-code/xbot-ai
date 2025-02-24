@@ -1,0 +1,103 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #34495e, #2c3e50);
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    width: 300px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatar {
+    width: 115px;
+    height: 115px;
+    border-radius: 50%;
+    margin: 0 auto 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.avatar-icon {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    background-image: url("/logo.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 35px;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    outline: none;
+    font-size: 16px;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.field-icon {
+    position: absolute;
+    left: 2%;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-text {
+    float: right;
+    padding: 12px 0;
+    margin-top: 20px;
+}
+
+.form-text span {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-style: italic;
+    font-size: 14px;
+}
+
+.register {
+    clear: both;
+    text-align: center;
+    width: 100%;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 0 0 20px 20px;
+    margin: 30px -30px -30px -30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.register a {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+}

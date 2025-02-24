@@ -1,0 +1,28 @@
+.main-btn {
+    width: 45%;
+    padding: 12px;
+    background-color: rgba(52, 73, 94, 0.9);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 15px;
+    float: left;
+    transition: all 0.3s ease-in-out;
+}
+
+.main-btn:hover {
+    background-color: rgba(41, 128, 185, 1);
+    box-shadow: 0 5px 15px rgba(41, 128, 185, 0.4);
+    transform: translateY(-3px);
+}
+
+.main-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(41, 128, 185, 0.2);
+}
+
+.login-btn {
+    margin-top: 20px;
+}

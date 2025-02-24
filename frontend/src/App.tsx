@@ -9,6 +9,7 @@ import SocialAccountLayout from "./layouts/SocialAccountLayout.tsx";
 import BlockchainConsoleLayout from "./layouts/BlockchainConsoleLayout.tsx";
 import DocumentationLayout from "./layouts/DocumentationLayout.tsx";
 import SocialAccountBotLayout from "./layouts/SocialAccountBotLayout.tsx";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
 
