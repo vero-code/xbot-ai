@@ -53,80 +53,80 @@ const SocialAccountPage: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className="page-container">
             <header>
-                <div>
-                    <h1>Your Social Account Page</h1>
-                    <p>For the bot to work effectively, you need to connect your account information.</p>
-                    <p>Find these settings in your X Developer Platform account.</p>
-                </div>
+                <h1>Social Account Settings</h1>
+                <p>Connect your X Developer Platform account to enable bot functionality</p>
+                <p>You can find these credentials in your X Developer Platform dashboard</p>
             </header>
             <main>
                 <form onSubmit={handleSubmit} className="form-container">
                     <div className="form-group">
-                        <label htmlFor="username">Username:</label>
                         <input
                             id="username"
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Username"
                             required
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="userId">User ID:</label>
                         <input
                             id="userId"
                             type="text"
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
+                            placeholder="User ID"
                             required
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="apiKey">API Key:</label>
                         <input
                             id="apiKey"
                             type="text"
                             value={apiKey}
                             onChange={(e) => setApiKey(e.target.value)}
+                            placeholder="API Key"
                             required
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="apiSecretKey">API Secret Key:</label>
                         <input
                             id="apiSecretKey"
                             type="text"
                             value={apiSecretKey}
                             onChange={(e) => setApiSecretKey(e.target.value)}
+                            placeholder="API Secret"
                             required
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="accessToken">Access Token:</label>
                         <input
                             id="accessToken"
                             type="text"
                             value={accessToken}
                             onChange={(e) => setAccessToken(e.target.value)}
+                            placeholder="Access Token"
                             required
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="accessTokenSecret">Access Token Secret:</label>
                         <input
                             id="accessTokenSecret"
                             type="text"
                             value={accessTokenSecret}
                             onChange={(e) => setAccessTokenSecret(e.target.value)}
+                            placeholder="Access Token Secret"
                             required
                         />
                     </div>
-                    <button type="submit" className="submit-button">Save Settings</button>
-                    <button type="button" onClick={() => navigate("/")}>⬅ Back</button>
+                    <div className="button-group">
+                        <button type="submit" className="submit-button">Save Settings</button>
+                        <button type="button" onClick={() => navigate("/")}>⬅ Back to Dashboard</button>
+                    </div>
                 </form>
-                {message && <p>{message}</p>}
+                {message && <p className={message.includes("successfully") ? "success" : "error"}>{message}</p>}
             </main>
         </div>
     );
