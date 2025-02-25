@@ -29,23 +29,29 @@ const BlockchainConsolePage: React.FC = () => {
     return (
         <div className="blockchain-console-container">
             <h1>Blockchain Console</h1>
-            {message && <p className="message">{message}</p>}
+            {message && <p className={`message ${message.includes("Error") ? "error" : ""}`}>{message}</p>}
 
             <section className="log-section">
                 <h2>Logs</h2>
                 {isLoading ? (
-                    <p>Loading logs...</p>
+                    <p className="loading">Loading logs...</p>
                 ) : logs.length === 0 ? (
-                    <p>No logs found.</p>
+                    <p className="empty-state">No logs found.</p>
                 ) : (
                     <ul>
                         {logs.map((log, index) => (
-                            <li key={index}>{log}</li>
+                            <li key={index}>
+                                {log.split(', Timestamp:').map((part, i) => (
+                                    <React.Fragment key={i}>
+                                        {i === 0 ? part : <span className="timestamp">Timestamp: {part}</span>}
+                                    </React.Fragment>
+                                ))}
+                            </li>
                         ))}
                     </ul>
                 )}
             </section>
-            <button onClick={() => navigate("/")}>⬅ Back</button>
+            <button onClick={() => navigate("/")}>⬅ Back to Dashboard</button>
         </div>
     );
 };
