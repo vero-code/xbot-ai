@@ -48,7 +48,7 @@ const RegisterPage: React.FC = () => {
                 <div className="form-group">
                     <i className="field-icon">👨🏻‍💻</i>
                     <input
-                        className={`glass-input ${error ? "input-error" : ""}`}
+                        className={`auth-input ${error ? "input-error" : ""}`}
                         type="text"
                         placeholder="Username"
                         value={username}
@@ -60,7 +60,7 @@ const RegisterPage: React.FC = () => {
                 <div className="form-group">
                     <i className="field-icon">✉️</i>
                     <input
-                        className={`glass-input ${error ? "input-error" : ""}`}
+                        className={`auth-input ${error ? "input-error" : ""}`}
                         type="email"
                         placeholder="Email"
                         value={email}
@@ -72,7 +72,7 @@ const RegisterPage: React.FC = () => {
                 <div className="form-group">
                     <i className="field-icon">🔒</i>
                     <input
-                        className={`glass-input ${error ? "input-error" : ""}`}
+                        className={`auth-input ${error ? "input-error" : ""}`}
                         type="password"
                         placeholder="Password"
                         value={password}
@@ -83,7 +83,7 @@ const RegisterPage: React.FC = () => {
                 <div className="form-group">
                     <i className="field-icon">🔒</i>
                     <input
-                        className={`glass-input ${error ? "input-error" : ""}`}
+                        className={`auth-input ${error ? "input-error" : ""}`}
                         type="password"
                         placeholder="Confirm Password"
                         value={confirmPassword}

@@ -70,31 +70,6 @@ button:focus-visible {
   }
 }
 
-/* Input */
-.glass-input {
-  font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  color: white;
-  outline: none;
-  transition: 0.3s;
-}
-
-.glass-input::placeholder {
-  font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.glass-input:focus {
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-}
-
 /* Container */
 .glass-container {
   background: rgba(255, 255, 255, 0.1);

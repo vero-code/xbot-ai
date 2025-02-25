@@ -51,7 +51,9 @@ header p {
     font-weight: 500;
 }
 
-.form-group input {
+/* Inputs */
+.social-input {
+    font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     width: 100%;
     padding: 15px;
     background: rgba(255, 255, 255, 0.1);
@@ -60,26 +62,29 @@ header p {
     color: #fff;
     font-size: 1em;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
-.form-group input::placeholder {
+.social-input::placeholder {
+    font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.95em;
 }
 
-.form-group input:focus {
+.social-input:focus {
     outline: none;
     border-color: rgba(255, 255, 255, 0.5);
     background: rgba(255, 255, 255, 0.15);
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
 }
 
-.form-group input:focus::placeholder {
+.social-input:focus::placeholder {
     color: rgba(255, 255, 255, 0.4);
     transform: translateY(-3px);
     transition: all 0.3s ease;
 }
 
+/* Buttons */
 button {
     padding: 12px 24px;
     border: none;
@@ -117,6 +122,7 @@ p {
     border-radius: 8px;
 }
 
+/* Messages */
 .success {
     background: rgba(46, 204, 113, 0.2);
     color: #2ecc71;
@@ -125,10 +131,6 @@ p {
 .error {
     background: rgba(231, 76, 60, 0.2);
     color: #e74c3c;
-}
-
-.form-group input::placeholder {
-    font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 @media (max-width: 768px) {

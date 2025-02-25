@@ -14,20 +14,32 @@ body {
     position: relative;
 }
 
-.form-group input {
+/* Input */
+.auth-input {
     width: 100%;
     padding: 10px 35px;
+    min-height: 40px;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    background: transparent;
-    outline: none;
-    font-size: 16px;
-    color: #fff;
     box-sizing: border-box;
+    font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    outline: none;
+    transition: 0.3s;
 }
 
-.form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+.auth-input::placeholder {
+    font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.auth-input:focus {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 }
 
 .field-icon {

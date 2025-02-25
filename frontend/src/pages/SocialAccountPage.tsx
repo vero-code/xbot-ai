@@ -63,6 +63,7 @@ const SocialAccountPage: React.FC = () => {
                 <form onSubmit={handleSubmit} className="form-container">
                     <div className="form-group">
                         <input
+                            className="social-input"
                             id="username"
                             type="text"
                             value={username}
@@ -73,6 +74,7 @@ const SocialAccountPage: React.FC = () => {
                     </div>
                     <div className="form-group">
                         <input
+                            className="social-input"
                             id="userId"
                             type="text"
                             value={userId}
@@ -83,6 +85,7 @@ const SocialAccountPage: React.FC = () => {
                     </div>
                     <div className="form-group">
                         <input
+                            className="social-input"
                             id="apiKey"
                             type="text"
                             value={apiKey}
@@ -93,6 +96,7 @@ const SocialAccountPage: React.FC = () => {
                     </div>
                     <div className="form-group">
                         <input
+                            className="social-input"
                             id="apiSecretKey"
                             type="text"
                             value={apiSecretKey}
@@ -103,6 +107,7 @@ const SocialAccountPage: React.FC = () => {
                     </div>
                     <div className="form-group">
                         <input
+                            className="social-input"
                             id="accessToken"
                             type="text"
                             value={accessToken}
@@ -113,6 +118,7 @@ const SocialAccountPage: React.FC = () => {
                     </div>
                     <div className="form-group">
                         <input
+                            className="social-input"
                             id="accessTokenSecret"
                             type="text"
                             value={accessTokenSecret}
