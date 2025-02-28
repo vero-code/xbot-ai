@@ -37,6 +37,8 @@ build/
 
 ### Data ###
 .data/
+*.mv.db
+*.trace.db
 
 ### Node.js ###
 /blockchain/node_modules/

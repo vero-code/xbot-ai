@@ -1,35 +1,23 @@
 # 🤖 Xbot AI
 
-**Xbot AI** is a **X-based agent** that leverages **Google Trends (Pytrends, Python)**, **Gemini AI for tweet generation**, and **blockchain logging on NEAR Testnet**. Users interact with the bot via **X mentions and replies**, allowing them to fetch trending topics, generate posts, and log interactions on the blockchain.
+**Xbot AI** is a **X-based intelligent agent** that integrates **Java Spring Boot, Google Trends (pytrends, Python), Gemini AI for post generation, and blockchain logging on NEAR Testnet**. Users interact with the bot via **X mentions and replies**, enabling real-time trend analysis, AI-generated posts, and transparent blockchain logging.
+
 
 📌 **Key Features:**
 
-✅ **Google Trends & Pytrends** for real-time trending topics 📊
+✅ **Java Spring Boot** – Core backend for AI processing & blockchain interactions 🖥️
 
-✅ **Blockchain Logging (NEAR Testnet)** for transparency 🔗
+✅ **Google Trends & pytrends** – Fetching real-time trending topics 📊
 
-✅ **AI-Powered Post Generation** using Gemini AI 🤖
+✅ **AI-Powered Post Generation** – Automated tweets using Gemini AI 🤖
 
-✅ **X Automation** via mentions and replies ✨
+✅ **Blockchain Logging (NEAR Testnet)** – Ensuring transparency & verification 🔗
 
-✅ **React-Based UI** for easy management 🎨
+✅ **X Automation** – Reacting to mentions & replies for seamless interaction ✨
+
+✅ **React-Based UI** – Intuitive web dashboard for bot management 🎨
 
 🎯 **This project was created for the** [One Trillion Agents Hackathon](https://devpost.com/software/xbot-ai).
-
-
-## 📑 Table of Contents
-
-- [✨ Features](#features)
-- [⚙️ Architecture](#architecture)
-- [📌 Prerequisites](#prerequisites)
-- [📥 Installation](#installation)
-- [🔧 Configuration](#configuration)
-- [🚀 Running the Application](#running-the-application)
-- [📡 API Endpoints](#api-endpoints)
-- [🤖 Usage](#usage)
-- [🧠 Gemini AI Integration](#gemini-ai-integration)
-- [🚀 Future Improvements](#future-improvements)
-- [📜 License](#license)
 
 
 ## ✨ Features
@@ -42,44 +30,66 @@
 - **AI-Powered Post Generation:** Uses **Gemini AI** to create engaging posts based on **selected trends**.
 - **React-Based UI:** A **dashboard** for managing accounts, checking blockchain logs, and configuring user/bot settings.
 
+
 ## ⚙️ Architecture
 
-### Backend (Spring Boot + Flask + Python)
+### **1️⃣ Core Technologies**
+| **Technology**             | **Version** | **Usage** |
+|----------------------------|-------------|------------------------------------------------|
+| **Java 23+ (Spring Boot)** | v3.4.2      | Backend for fetching data from X, AI content generation, blockchain API integration |
+| **Apache Maven**           | v3.9.9      | Dependency management & project build system for Java |
+| **Lombok**                 | v1.18.36    | Java annotation library to reduce boilerplate code    |
+| **Vite, React, TypeScript** | -           | UI for bot management & monitoring logs in blockchain |
+| **Node.js**                | v23.4.0     | JavaScript runtime for Vite & frontend tooling |
+| **npm, npx**               | v10.9.2     | Package management & script execution for frontend |
+| **Git & GitHub**           | -           | Version control & code hosting |
+| **Postman**                | 11.33.5     | API testing |
+| **IntelliJ IDEA**          | 2024.3.3    | Development environment |
 
-- **REST API** for **X & Blockchain integration**.
-- **Pytrends (Python)** for fetching **Google Trends**.
-- **JWT-based authentication** for user security.
-- **H2 Database** for storing user data and social account info.
-- **Spring Boot API** handles request processing.
+### **2️⃣ Blockchain & Smart Contracts**
+| **Component** | **Version** | **Usage** |
+|--------------|------------|------------------------------------------------|
+| **NEAR Protocol** | - | Blockchain platform for smart contracts, transaction processing |
+| **NEAR CLI** | v4.0.13 | Command-line interface for NEAR blockchain interaction |
+| **Node.js, JavaScript, WebAssembly (WASM)** | - | Smart contract deployment, method execution via near-api-js, NEAR interaction |
+| **UnencryptedFileSystemKeyStore** | - | NEAR authentication & key storage (.near-credentials) |
+| **WSL for Ubuntu** | - | NEAR contract compilation & deployment |
+| **MyNearWallet** | - | NEAR testnet wallet |
 
-### Blockchain Integration (NEAR API)
+### **3️⃣ Data Fetching**
+| **API** | **Version** | **Usage** |
+|--------|------------|------------------------------------------------|
+| **X API** | - | Free plan, X API v2 (OAuth 1.0a via ScribeJava) |
+| **Google Trends API (pytrends)** | - | Fetching trending topics |
+| **Python** | v3.13.2 | Used for API integration & data processing |
+| **pip** | v24.3.1 | Package management for Python libraries |
+| **Flask** | - | Lightweight API backend for handling requests |
 
-- Uses `near-api-js` to interact with the **NEAR blockchain**.
-- Logs **AI-generated posts and interactions** for transparency.
+### **4️⃣ X Developer Platform**
+| **Component** | **Usage**                                       |
+|--------------|-------------------------------------------------|
+| **X Developer Platform** | Two developer accounts for XBot AI (user & bot) |
 
-### Frontend (React + Vite)
+### **5️⃣ X API Endpoints**
+| **Endpoint** | **Usage** |
+|-------------|------------------------------------------------|
+| `POST /2/tweets` | Post publishing |
+| `GET /2/users/:id/mentions` | Replying to mentions (@xbot_ai_) |
+| `GET /2/tweets/search/recent` | Searching for recent posts |
+| `GET /2/users/by/username/:username` | Fetching user details |
 
-- UI for **social media configuration, blockchain logs, and user settings**.
+### **6️⃣ Databases & Storage**
+| **Database**                           | **Usage** |
+|----------------------------------------|-------------------------------------------------------------|
+| **H2 (SQL), JPA, Lombok, Spring Boot** | Temporary local storage, ORM, and entity relationship management |
+| **User-SocialAccount Mapping**         | One-to-One entity linkage between User & SocialAccount/SocialAccountBot |
+| **JWT (JSON Web Token)**               | Authentication & session management |
 
-## 📌 Prerequisites
+### **7️⃣ AI Integration**
+| **Service** | **Usage** |
+|------------|-----------------------------------------------|
+| **Gemini API (Google Cloud Console)** | AI content generation for tweets |
 
-- **Java 23+, Spring Boot v3.4.2**
-- **Flask, Python v3.13.2, pip v24.3.1**
-- **Node.js v23.4.0**, npm v10.9.2
-- **Maven, Git, GitHub**
-- **NEAR CLI v4.0.13** (for blockchain integration)
-- **Vite, React, TypeScript**
-- **Postman, IntelliJ IDEA**
-- **Blockchain Wallet:** MyNearWallet (testnet)
-- **X Developer Platform (Free Plan)** – Requires **two X accounts** (one for the user, one for the bot).
-- **X API v2** (authentication via OAuth 1.0a using ScribeJava).
-- **X (Twitter) API:**
-  - https://api.twitter.com/2/tweets (generate tweet)
-  - GET /2/users/:id/mentions, GET /2/tweets/search/recent (X mention tracking)
-  - GET /2/users/by/username/:username (can be used for get user info)
-- **Google Trends API (Pytrends)**
-- **SQL, H2 Database**
-- **Gemini AI API (Google Cloud Console)**
 
 ## 📥 Installation
 
@@ -100,6 +110,7 @@
 ```bash
    npm install
    ```
+
 
 ## 🔧 Configuration
 
@@ -204,6 +215,7 @@
 ### 4️⃣ Viewing Blockchain Logs
 
 Visit the **Blockchain Console** to view **logs recorded on NEAR Testnet**.
+
 
 ## 🧠 Gemini AI Integration
 
