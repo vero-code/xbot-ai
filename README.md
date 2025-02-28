@@ -1,34 +1,16 @@
-# 🤖 Xbot AI
+# 🤖 XBot AI
 
-**Xbot AI** is a **X-based intelligent agent** that integrates **Java Spring Boot, Google Trends (pytrends, Python), Gemini AI for post generation, and blockchain logging on NEAR Testnet**. Users interact with the bot via **X mentions and replies**, enabling real-time trend analysis, AI-generated posts, and transparent blockchain logging.
-
-
-📌 **Key Features:**
-
-✅ **Java Spring Boot** – Core backend for AI processing & blockchain interactions 🖥️
-
-✅ **Google Trends & pytrends** – Fetching real-time trending topics 📊
-
-✅ **AI-Powered Post Generation** – Automated tweets using Gemini AI 🤖
-
-✅ **Blockchain Logging (NEAR Testnet)** – Ensuring transparency & verification 🔗
-
-✅ **X Automation** – Reacting to mentions & replies for seamless interaction ✨
-
-✅ **React-Based UI** – Intuitive web dashboard for bot management 🎨
-
-🎯 **This project was created for the** [One Trillion Agents Hackathon](https://devpost.com/software/xbot-ai).
-
+**XBot AI** is an **X-based intelligent agent** that integrates **Java Spring Boot, Python library for Google Trends, Gemini AI for post generation, and blockchain logging on NEAR Testnet**. Users interact with the bot via **X mentions and replies**, enabling real-time trend analysis, AI-generated posts, and transparent blockchain logging.
 
 ## ✨ Features
 
 - **X (formerly Twitter) Integration:** Users can interact with the bot via **X mentions and replies**.
-- **Google Trends (Pytrends) Analysis:** Fetch **real-time trending topics** from **Google Trends** dynamically.
-- **Blockchain Logging (NEAR Testnet):** Logs posts and interactions for transparency.
-- **Social Account Configuration:** Allows users to configure their account and bot credentials via the UI, stored in a database.
-- **JWT-based Authentication:** Secure API endpoints with JWT tokens.
+- **Trending Topics Analysis:** Fetch **real-time trending topics** using **pytrends** for Google Trends.
 - **AI-Powered Post Generation:** Uses **Gemini AI** to create engaging posts based on **selected trends**.
-- **React-Based UI:** A **dashboard** for managing accounts, checking blockchain logs, and configuring user/bot settings.
+- **Blockchain Logging (NEAR Testnet):** Logs posts and interactions for transparency.
+- **React-Based UI:** A **dashboard** for managing accounts, checking blockchain logs.
+
+🎯 **This project was created for the** [One Trillion Agents Hackathon](https://devpost.com/software/xbot-ai).
 
 
 ## ⚙️ Architecture
@@ -60,7 +42,7 @@
 | **API** | **Version** | **Usage** |
 |--------|------------|------------------------------------------------|
 | **X API** | - | Free plan, X API v2 (OAuth 1.0a via ScribeJava) |
-| **Google Trends API (pytrends)** | - | Fetching trending topics |
+| **pytrends** | - | Python library for fetching trending topics from Google Trends |
 | **Python** | v3.13.2 | Used for API integration & data processing |
 | **pip** | v24.3.1 | Package management for Python libraries |
 | **Flask** | - | Lightweight API backend for handling requests |
@@ -86,9 +68,9 @@
 | **JWT (JSON Web Token)**               | Authentication & session management |
 
 ### **7️⃣ AI Integration**
-| **Service** | **Usage** |
-|------------|-----------------------------------------------|
-| **Gemini API (Google Cloud Console)** | AI content generation for tweets |
+| **Service** | **Usage**                       |
+|------------|---------------------------------|
+| **Gemini API (Google Cloud Console)** | AI content generation for posts |
 
 
 ## 📥 Installation
@@ -117,7 +99,7 @@
 ### 1️⃣ **Backend Configuration (Spring Boot, Flask)**
 
 * The backend uses ```application.properties``` for database and API configurations.
-* Google Trends fetching is handled via **Pytrends** (Python).
+* Google Trends fetching is handled via Python library.
 
 ### 2️⃣ **Setting Credentials(React, TypeScript)**
 
@@ -126,7 +108,7 @@
 
 ## 🚀 Running the Application
 
-### 1️⃣ Start the Google Trends API (Python)
+### 1️⃣ Start the Flask Server (Python)
 
 ```bash
    python trends_api.py
@@ -157,17 +139,17 @@
 * POST ```/api/auth/login``` — Log in and receive a JWT token.
 * POST ```/api/auth/register``` — Register a new user.
 
-### 🌍 Google Trends Fetching (Pytrends)
-* GET ```/api/bot/trends``` — Fetch trending topics from **Google Trends** (Python-based).
+### 🌍 Fetching Trends Data
+* GET ```/api/bot/trends``` — Retrieve trending topics using **pytrends**.
 
 ### 📝 Post Generation & AI
 
-* POST ```/api/bot/select-trend``` — Select a trend for AI-powered tweet generation.
-* GET ```/api/bot/generate-tweet``` — Generate a tweet using Gemini AI.
+* POST ```/api/bot/select-trend``` — Select a trend for AI-powered post generation.
+* GET ```/api/bot/generate-tweet``` — Generate a post using Gemini AI.
 
 ### 🔗 Blockchain Logging
 
-* GET ```/api/blockchain/logs``` — View tweet logs stored on the blockchain.
+* GET ```/api/blockchain/logs``` — View post logs stored on the blockchain.
 
 
 ## 🤖 Usage
@@ -197,7 +179,7 @@
    country United States
    ```
 
-* The bot retrieves **Google Trends** using **Pytrends** and responds with **trending topics**.
+* The bot retrieves **actual trends** and responds with **trending topics**.
 
 ### 3️⃣ Selecting a Trend for AI Post Generation
 
@@ -221,13 +203,13 @@ Visit the **Blockchain Console** to view **logs recorded on NEAR Testnet**.
 
 🔹 **How It Works:**
 
-1️⃣ Retrieves **trending topics** via **Google Trends (Pytrends, Python)**.
+1️⃣ Retrieves **trending topics**.
 
 2️⃣ Processes the trend and sends it to **Gemini AI**.
 
 3️⃣ Generates on **AI-powered post**.
 
-4️⃣ Publishes the post on **X(Twitter)**.
+4️⃣ Publishes the post on **X**.
 
 5️⃣ Logs the interaction on **NEAR Testnet** for transparency.
 
@@ -247,6 +229,6 @@ Visit the **Blockchain Console** to view **logs recorded on NEAR Testnet**.
 
 🔹 **MIT License** – Open-source and free to modify.
 
-🔹 **XBot AI – your AI-powered assistant for X (formerly Twitter)**.
+🔹 **XBot AI – your AI-powered assistant for X**.
 
 ✨ Automate, publish, and analyze trends effortlessly! 🚀
