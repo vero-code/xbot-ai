@@ -93,7 +93,7 @@ public class SocialMediaBotMentionService {
     public void pollMentions() {
         initOAuthServiceIfNeeded();
         try {
-            String botId = getUserIdSilently(botUsername);
+            String botId = systemBotPropertiesProvider.getProperties().getUserID();
 
             String url = "https://api.twitter.com/2/users/" + botId + "/mentions?tweet.fields=author_id";
             if (lastSeenMentionId != null) {
@@ -173,7 +173,7 @@ public class SocialMediaBotMentionService {
             return;
         }
 
-        String userId = getUserIdSilently(userUsername);
+        String userId = systemUserPropertiesProvider.getProperties().getUserID();
 
         if (!tweetAuthorId.equals(userId)) {
             logger.info("Skipping tweet not sent by selected user. Tweet author_id: {}", tweetAuthorId);

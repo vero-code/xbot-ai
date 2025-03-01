@@ -22,6 +22,7 @@ public class SystemSocialMediaUserPropertiesProvider {
         props.setAccessToken(dto.getAccessToken());
         props.setAccessTokenSecret(dto.getAccessTokenSecret());
         props.setUsername(dto.getUsername());
+        props.setUserID(dto.getUserId());
         return props;
     }
 }

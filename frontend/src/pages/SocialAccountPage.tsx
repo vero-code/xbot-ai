@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const SocialAccountPage: React.FC = () => {
     const [username, setUsername] = useState("");
+    const [userId, setUserId] = useState("");
     const [apiKey, setApiKey] = useState("");
     const [apiSecretKey, setApiSecretKey] = useState("");
     const [accessToken, setAccessToken] = useState("");
@@ -30,6 +31,7 @@ const SocialAccountPage: React.FC = () => {
 
         const data = {
             username,
+            userId,
             apiKey,
             apiSecretKey,
             accessToken,
@@ -66,6 +68,17 @@ const SocialAccountPage: React.FC = () => {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             placeholder="Username"
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            className="social-input"
+                            id="userId"
+                            type="text"
+                            value={userId}
+                            onChange={(e) => setUserId(e.target.value)}
+                            placeholder="User ID"
                             required
                         />
                     </div>

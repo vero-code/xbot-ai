@@ -17,6 +17,7 @@ public class SocialAccount {
     private Long id;
 
     private String username;
+    private String userId;
     private String apiKey;
     private String apiSecretKey;
     private String accessToken;
