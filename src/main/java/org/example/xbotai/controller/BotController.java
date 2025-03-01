@@ -4,9 +4,9 @@ import org.example.xbotai.dto.TrendSelectionRequest;
 import org.example.xbotai.dto.TweetGenerationRequest;
 import org.example.xbotai.service.core.AIService;
 import org.example.xbotai.service.core.SocialMediaService;
-import org.example.xbotai.service.core.TrendService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/bot")
 public class BotController {
-
-    private final TrendService trendService;
 
     private final AIService aiService;
 
@@ -25,15 +23,20 @@ public class BotController {
 
     private final Map<String, String> userSelectedTrends = new HashMap<>();
 
-    public BotController(TrendService trendService, AIService aiService, SocialMediaService socialMediaService) {
-        this.trendService = trendService;
+    public BotController(AIService aiService, SocialMediaService socialMediaService) {
         this.aiService = aiService;
         this.socialMediaService = socialMediaService;
     }
 
     @GetMapping("/trends")
     public List<String> getTrends(@RequestParam(defaultValue = "united_states") String country) {
-        return trendService.fetchTrends(country);
+        String aiResponse = aiService.fetchTrendsFromAI(country);
+
+        if (aiResponse.length() > 280) {
+            aiResponse = aiResponse.substring(0, 277) + "...";
+        }
+
+        return Arrays.asList(aiResponse.split("\n"));
     }
 
     @PostMapping("/select-trend")

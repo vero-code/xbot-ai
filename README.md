@@ -1,11 +1,11 @@
 # 🤖 XBot AI
 
-**XBot AI** is an **X-based intelligent agent** that integrates **Java Spring Boot, Python library for Google Trends, Gemini AI for post generation, and blockchain logging on NEAR Testnet**. Users interact with the bot via **X mentions and replies**, enabling real-time trend analysis, AI-generated posts, and transparent blockchain logging.
+**XBot AI** is an **X-based intelligent agent** that integrates **Java Spring Boot, Gemini AI for getting trends and post generation, and blockchain logging on NEAR Testnet**. Users interact with the bot via **X mentions and replies**, enabling real-time trend analysis, AI-generated posts, and transparent blockchain logging.
 
 ## ✨ Features
 
 - **X (formerly Twitter) Integration:** Users can interact with the bot via **X mentions and replies**.
-- **Trending Topics Analysis:** Fetch **real-time trending topics** using **pytrends** for Google Trends.
+- **Trending Topics Analysis:** Fetch **real-time trending topics** using **Gemini**.
 - **AI-Powered Post Generation:** Uses **Gemini AI** to create engaging posts based on **selected trends**.
 - **Blockchain Logging (NEAR Testnet):** Logs posts and interactions for transparency.
 - **React-Based UI:** A **dashboard** for managing accounts, checking blockchain logs.
@@ -42,10 +42,6 @@
 | **API** | **Version** | **Usage** |
 |--------|------------|------------------------------------------------|
 | **X API** | - | Free plan, X API v2 (OAuth 1.0a via ScribeJava) |
-| **pytrends** | - | Python library for fetching trending topics from Google Trends |
-| **Python** | v3.13.2 | Used for API integration & data processing |
-| **pip** | v24.3.1 | Package management for Python libraries |
-| **Flask** | - | Lightweight API backend for handling requests |
 
 ### **4️⃣ X Developer Platform**
 | **Component** | **Usage**                                       |
@@ -68,9 +64,9 @@
 | **JWT (JSON Web Token)**               | Authentication & session management |
 
 ### **7️⃣ AI Integration**
-| **Service** | **Usage**                       |
-|------------|---------------------------------|
-| **Gemini API (Google Cloud Console)** | AI content generation for posts |
+| **Service**                           | **Model**    -   | **Usage**                     |
+|---------------------------------------|------------------|-------------------------------|
+| **Gemini API (Google Cloud Console)** | gemini-1.5-flash | Get trends & generate post    |
 
 
 ## 📥 Installation
@@ -96,10 +92,10 @@
 
 ## 🔧 Configuration
 
-### 1️⃣ **Backend Configuration (Spring Boot, Flask)**
+### 1️⃣ **Backend Configuration (Spring Boot)**
 
 * The backend uses ```application.properties``` for database and API configurations.
-* Google Trends fetching is handled via Python library.
+* Trends fetching is handled via Gemini.
 
 ### 2️⃣ **Setting Credentials(React, TypeScript)**
 
@@ -108,25 +104,18 @@
 
 ## 🚀 Running the Application
 
-### 1️⃣ Start the Flask Server (Python)
-
-```bash
-   python trends_api.py
-   ```
-
-### 2️⃣ Start the Backend (Spring Boot)
+### 1️⃣ Start the Backend (Spring Boot)
 
 ```bash
    mvn spring-boot:run
    ```
-
-### 3️⃣ **Start the Frontend (React)**
+### 2️⃣ **Start the Frontend (React)**
 
 ```bash
    npm run dev
    ```
 
-### 4️⃣ Access the Application:
+### 3️⃣ Access the Application:
 
 * **Frontend UI:** http://localhost:5173
 * **H2 Database Console:** http://localhost:8080/h2-console
@@ -140,7 +129,7 @@
 * POST ```/api/auth/register``` — Register a new user.
 
 ### 🌍 Fetching Trends Data
-* GET ```/api/bot/trends``` — Retrieve trending topics using **pytrends**.
+* GET ```/api/bot/trends``` — Retrieve trending topics using **Gemini**.
 
 ### 📝 Post Generation & AI
 

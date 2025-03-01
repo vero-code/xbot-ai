@@ -14,7 +14,6 @@ import org.example.xbotai.config.SocialMediaUserProperties;
 import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
 import org.example.xbotai.service.core.SocialMediaService;
-import org.example.xbotai.service.core.TrendService;
 import org.example.xbotai.util.SocialMediaCommandParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,6 @@ public class SocialMediaBotMentionService {
     private final SystemSocialMediaBotPropertiesProvider systemBotPropertiesProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final SocialMediaService socialMediaService;
-    private final TrendService trendService;
     private final TrendsCommandResponder trendsCommandResponder;
     private final Logger logger = LoggerFactory.getLogger(SocialMediaBotMentionService.class);
 
@@ -48,12 +46,10 @@ public class SocialMediaBotMentionService {
             SystemSocialMediaUserPropertiesProvider propertiesProvider,
                                      SystemSocialMediaBotPropertiesProvider systemBotPropertiesProvider,
                                      SocialMediaService socialMediaService,
-                                     TrendService trendService,
                                      TrendsCommandResponder trendsCommandResponder) {
         this.systemUserPropertiesProvider = propertiesProvider;
         this.systemBotPropertiesProvider = systemBotPropertiesProvider ;
         this.socialMediaService = socialMediaService;
-        this.trendService = trendService;
         this.trendsCommandResponder = trendsCommandResponder;
     }
 
@@ -189,11 +185,6 @@ public class SocialMediaBotMentionService {
             String userCountry = SocialMediaCommandParser.parseAllWordsAfterAsOne(text, "country");
             logger.info("userCountry: {}", userCountry);
             if (userCountry != null) {
-
-                if (!userCountry.equals("canada") && !userCountry.equals("united_states")) {
-                    logger.info("Invalid country specified, using default 'united_states'");
-                    userCountry = "united_states";
-                }
                 logger.info("User specified country: {}", userCountry);
             } else {
                 logger.info("No word found after 'country', using default 'united_states'");

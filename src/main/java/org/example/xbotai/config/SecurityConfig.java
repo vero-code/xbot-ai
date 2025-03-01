@@ -44,6 +44,7 @@ public class SecurityConfig {
                                 "/api/auth/login", "/api/auth/register"
                         ).permitAll()
                         .requestMatchers("/api/blockchain/logs").permitAll()
+                        .requestMatchers("/api/bot/trends").permitAll()
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(request -> {

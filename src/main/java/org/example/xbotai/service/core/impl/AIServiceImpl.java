@@ -44,4 +44,33 @@ public class AIServiceImpl implements AIService {
             return "Error generating tweet: " + response.getStatusCode();
         }
     }
+
+    @Override
+    public String fetchTrendsFromAI(String country) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        JSONObject requestBody = new JSONObject()
+                .put("contents", new JSONArray().put(new JSONObject()
+                        .put("parts", new JSONArray().put(new JSONObject()
+                                .put("text", "Create 10 hot trending topics that could be popular in the " + country +
+                                        " right now. Format them strictly as a comma separated list. Do not include any explanations or extra text.")))));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(apiUrl + "?key=" + apiKey, request, String.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            JSONObject jsonResponse = new JSONObject(response.getBody());
+            return jsonResponse.getJSONArray("candidates")
+                    .getJSONObject(0)
+                    .getJSONObject("content")
+                    .getJSONArray("parts")
+                    .getJSONObject(0)
+                    .getString("text");
+        } else {
+            return "Error fetching AI-generated trends: " + response.getStatusCode();
+        }
+    }
 }

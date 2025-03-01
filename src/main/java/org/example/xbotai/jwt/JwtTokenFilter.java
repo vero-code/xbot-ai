@@ -49,6 +49,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         return uri.startsWith("/h2-console") ||
                 uri.startsWith("/favicon.ico") ||
-                uri.startsWith("/api/blockchain/logs");
+                uri.startsWith("/api/blockchain/logs") ||
+                uri.startsWith("/api/bot/trends");
     }
 }
