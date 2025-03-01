@@ -54,9 +54,9 @@
 
 ### **5️⃣ X API Endpoints**
 | **Endpoint** | **Usage** |
-|-------------|------------------------------------------------|
+|-------------|----------------------------------------------|
 | `POST /2/tweets` | Post publishing |
-| `GET /2/users/:id/mentions` | Replying to mentions (@xbot_ai_) |
+| `GET /2/users/:id/mentions` | Replying to mentions |
 | `GET /2/tweets/search/recent` | Searching for recent posts |
 | `GET /2/users/by/username/:username` | Fetching user details |
 

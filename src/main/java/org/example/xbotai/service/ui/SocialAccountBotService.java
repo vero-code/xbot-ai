@@ -7,4 +7,6 @@ public interface SocialAccountBotService {
     SocialAccountBotDto saveSocialAccount(SocialAccountBotDto dto);
 
     SocialAccountBotDto getSocialAccountByUserId(Long userId);
+
+    SocialAccountBotDto getDefaultSocialAccount();
 }

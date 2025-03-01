@@ -9,9 +9,10 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
-import org.example.xbotai.config.SocialMediaProperties;
-import org.example.xbotai.provider.SocialMediaBotPropertiesProvider;
-import org.example.xbotai.provider.SocialMediaUserPropertiesProvider;
+import org.example.xbotai.config.SocialMediaBotProperties;
+import org.example.xbotai.config.SocialMediaUserProperties;
+import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
+import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
 import org.example.xbotai.service.core.SocialMediaService;
 import org.example.xbotai.service.core.TrendService;
 import org.example.xbotai.util.SocialMediaCommandParser;
@@ -28,8 +29,8 @@ import java.util.Map;
 @Service
 public class SocialMediaBotMentionService {
 
-    private final SocialMediaUserPropertiesProvider propertiesProvider;
-    private final SocialMediaBotPropertiesProvider botPropertiesProvider;
+    private final SystemSocialMediaUserPropertiesProvider systemUserPropertiesProvider;
+    private final SystemSocialMediaBotPropertiesProvider systemBotPropertiesProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final SocialMediaService socialMediaService;
     private final TrendService trendService;
@@ -40,14 +41,17 @@ public class SocialMediaBotMentionService {
     private OAuth1AccessToken accessToken;
     private String lastSeenMentionId = null;
 
+    private String botUsername;
+    private String userUsername;
+
     public SocialMediaBotMentionService(
-                                     SocialMediaUserPropertiesProvider propertiesProvider,
-                                     SocialMediaBotPropertiesProvider botPropertiesProvider,
+            SystemSocialMediaUserPropertiesProvider propertiesProvider,
+                                     SystemSocialMediaBotPropertiesProvider systemBotPropertiesProvider,
                                      SocialMediaService socialMediaService,
                                      TrendService trendService,
                                      TrendsCommandResponder trendsCommandResponder) {
-        this.propertiesProvider = propertiesProvider;
-        this.botPropertiesProvider = botPropertiesProvider;
+        this.systemUserPropertiesProvider = propertiesProvider;
+        this.systemBotPropertiesProvider = systemBotPropertiesProvider ;
         this.socialMediaService = socialMediaService;
         this.trendService = trendService;
         this.trendsCommandResponder = trendsCommandResponder;
@@ -56,27 +60,40 @@ public class SocialMediaBotMentionService {
     private void initOAuthServiceIfNeeded() {
         if (oAuthService == null || accessToken == null) {
             try {
-                SocialMediaProperties props = botPropertiesProvider.getPropertiesForCurrentUser();
-                this.oAuthService = new ServiceBuilder(props.getApiKey())
-                        .apiSecret(props.getApiSecretKey())
+                getUserPropertiesFromDB();
+
+                SocialMediaBotProperties botProps = getBotPropertiesFromDB();
+
+                this.oAuthService = new ServiceBuilder(botProps.getApiKey())
+                        .apiSecret(botProps.getApiSecretKey())
                         .build(TwitterApi.instance());
-                this.accessToken = new OAuth1AccessToken(props.getAccessToken(), props.getAccessTokenSecret());
+                this.accessToken = new OAuth1AccessToken(botProps.getAccessToken(), botProps.getAccessTokenSecret());
             } catch (Exception e) {
                 logger.error("Failed to initialize OAuth service", e);
             }
         }
     }
 
+    private void getUserPropertiesFromDB() {
+        SocialMediaUserProperties userProps = systemUserPropertiesProvider.getProperties();
+        this.userUsername = userProps.getUsername();
+    }
+
+    private SocialMediaBotProperties getBotPropertiesFromDB() {
+        SocialMediaBotProperties botProps = systemBotPropertiesProvider.getProperties();
+        this.botUsername = botProps.getUsername();
+        return botProps;
+    }
+
     /**
      * Polls for tweets in the bot's account that mention the bot every 15 minutes.
      * Then filters them to keep only tweets sent from the selected user's account.
      */
-    //@Scheduled(fixedDelay = 900000)
+    @Scheduled(fixedDelay = 900000)
     public void pollMentions() {
         initOAuthServiceIfNeeded();
         try {
-            String username = botPropertiesProvider.getPropertiesForCurrentUser().getUsername();
-            String botId = getUserIdSilently(username);
+            String botId = getUserIdSilently(botUsername);
 
             String url = "https://api.twitter.com/2/users/" + botId + "/mentions?tweet.fields=author_id";
             if (lastSeenMentionId != null) {
@@ -102,7 +119,7 @@ public class SocialMediaBotMentionService {
     private void fallbackToRecentSearch(String botId) {
         try {
             String fallbackUrl = "https://api.twitter.com/2/tweets/search/recent?query=%40"
-                    + botPropertiesProvider.getPropertiesForCurrentUser().getUsername()
+                    + botUsername
                     + "&max_results=10&tweet.fields=author_id";
             OAuthRequest fallbackRequest = createOAuthRequest(fallbackUrl);
             Response fallbackResponse = oAuthService.execute(fallbackRequest);
@@ -156,15 +173,14 @@ public class SocialMediaBotMentionService {
             return;
         }
 
-        String username = propertiesProvider.getPropertiesForCurrentUser().getUsername();
-        String userId = getUserIdSilently(username);
+        String userId = getUserIdSilently(userUsername);
 
         if (!tweetAuthorId.equals(userId)) {
             logger.info("Skipping tweet not sent by selected user. Tweet author_id: {}", tweetAuthorId);
             return;
         }
 
-        String botMention = "@" + botPropertiesProvider.getPropertiesForCurrentUser().getUsername();
+        String botMention = "@" + botUsername;
         if (text.toLowerCase().contains("trends") && text.contains(botMention)) {
             logger.info("Detected 'trends' command in tweet: {}", text);
             trendsCommandResponder.askCountryForTrends(tweetId, text);
@@ -225,12 +241,12 @@ public class SocialMediaBotMentionService {
                     requestBodyPostTweet.put("userId", userId);
                     requestBodyPostTweet.put("tweet", generatedTweetResponse);
                     String responsePostTweet = restTemplate.postForObject(urlPostTweet, requestBodyPostTweet, String.class);
-                    logger.info("Post tweet response: {}", responsePostTweet);
+                    logger.info("Post response: {}", responsePostTweet);
 
-                    String botAnswer = "The tweet was posted on your behalf. Contact me again!";
+                    String botAnswer = "The post was posted on your behalf. Contact me again!";
                     trendsCommandResponder.displayGeneratedTweet(tweetId, botAnswer);
                 } catch (Exception e) {
-                    logger.error("Error calling confirm tweet API", e);
+                    logger.error("Error calling confirm post API", e);
                 }
             } catch (Exception e) {
                 logger.error("Error calling trend selection/generation API", e);

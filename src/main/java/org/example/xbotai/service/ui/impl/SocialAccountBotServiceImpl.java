@@ -44,4 +44,12 @@ public class SocialAccountBotServiceImpl implements SocialAccountBotService {
                 .orElseThrow(() -> new IllegalArgumentException("Social account not found for userId: " + userId));
         return mapper.toDto(account);
     }
+
+    @Override
+    public SocialAccountBotDto getDefaultSocialAccount() {
+        return repository.findAll().stream()
+                .findFirst()
+                .map(mapper::toDto)
+                .orElseThrow(() -> new IllegalArgumentException("No default social account found"));
+    }
 }

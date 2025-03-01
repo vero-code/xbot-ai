@@ -7,25 +7,26 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
+import org.example.xbotai.config.SocialMediaBotProperties;
 import org.example.xbotai.config.SocialMediaProperties;
-import org.example.xbotai.provider.SocialMediaBotPropertiesProvider;
-import org.example.xbotai.provider.SocialMediaUserPropertiesProvider;
+import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
+import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
 import org.example.xbotai.service.core.SocialMediaService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SocialMediaServiceImpl implements SocialMediaService {
 
-    private final SocialMediaUserPropertiesProvider propertiesProvider;
+    private final SystemSocialMediaUserPropertiesProvider propertiesProvider;
 
-    private final SocialMediaBotPropertiesProvider botPropertiesProvider;
+    private final SystemSocialMediaBotPropertiesProvider botPropertiesProvider;
 
     private final BlockchainService blockchainService;
 
     private static final String TWEET_ENDPOINT = "https://api.twitter.com/2/tweets";
 
-    public SocialMediaServiceImpl(SocialMediaUserPropertiesProvider propertiesProvider,
-                                  SocialMediaBotPropertiesProvider botPropertiesProvider,
+    public SocialMediaServiceImpl(SystemSocialMediaUserPropertiesProvider propertiesProvider,
+                                  SystemSocialMediaBotPropertiesProvider botPropertiesProvider,
                                   BlockchainService blockchainService) {
         this.propertiesProvider = propertiesProvider;
         this.botPropertiesProvider = botPropertiesProvider;
@@ -37,7 +38,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
      */
     @Override
     public String postBotTweet(String tweetContent, boolean logToBlockchain) {
-        SocialMediaProperties botProperties = botPropertiesProvider.getPropertiesForCurrentUser();
+        SocialMediaProperties botProperties = botPropertiesProvider.getProperties();
         return doPostTweet(botProperties, tweetContent, logToBlockchain);
     }
 
@@ -46,7 +47,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
      */
     @Override
     public String postUserTweet(String tweetContent, boolean logToBlockchain) {
-        SocialMediaProperties userProperties = propertiesProvider.getPropertiesForCurrentUser();
+        SocialMediaProperties userProperties = propertiesProvider.getProperties();
         return doPostTweet(userProperties, tweetContent, logToBlockchain);
     }
 
@@ -87,13 +88,14 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
     @Override
     public String postBotReplyTweet(String tweetContent, String inReplyToTweetId, boolean logToBlockchain) {
-        OAuth10aService service = new ServiceBuilder(botPropertiesProvider.getPropertiesForCurrentUser().getApiKey())
-                .apiSecret(botPropertiesProvider.getPropertiesForCurrentUser().getApiSecretKey())
+        SocialMediaBotProperties botProperties = botPropertiesProvider.getProperties();
+        OAuth10aService service = new ServiceBuilder(botProperties.getApiKey())
+                .apiSecret(botProperties.getApiSecretKey())
                 .build(TwitterApi.instance());
 
         OAuth1AccessToken oauth1AccessToken = new OAuth1AccessToken(
-                botPropertiesProvider.getPropertiesForCurrentUser().getAccessToken(),
-                botPropertiesProvider.getPropertiesForCurrentUser().getAccessTokenSecret());
+                botProperties.getAccessToken(),
+                botProperties.getAccessTokenSecret());
 
         String payload = "{\"text\":\"" + tweetContent + "\", \"reply\":{\"in_reply_to_tweet_id\":\"" + inReplyToTweetId + "\"}}";
         OAuthRequest request = new OAuthRequest(Verb.POST, TWEET_ENDPOINT);

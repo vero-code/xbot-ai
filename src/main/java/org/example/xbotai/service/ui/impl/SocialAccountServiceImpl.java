@@ -44,4 +44,12 @@ public class SocialAccountServiceImpl implements SocialAccountService {
                 .orElseThrow(() -> new IllegalArgumentException("Social account not found for userId: " + userId));
         return mapper.toDto(account);
     }
+
+    @Override
+    public SocialAccountDto getDefaultSocialAccount() {
+        return repository.findAll().stream()
+                .findFirst()
+                .map(mapper::toDto)
+                .orElseThrow(() -> new IllegalArgumentException("No default social account found"));
+    }
 }
