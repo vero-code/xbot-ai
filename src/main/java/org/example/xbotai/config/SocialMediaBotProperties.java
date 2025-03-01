@@ -7,7 +7,6 @@ public class SocialMediaBotProperties implements SocialMediaProperties {
     private String accessToken;
     private String accessTokenSecret;
     private String username;
-    private String userID;
 
     @Override
     public String getApiKey() {
@@ -52,13 +51,5 @@ public class SocialMediaBotProperties implements SocialMediaProperties {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
     }
 }

@@ -12,7 +12,6 @@ public class SocialAccountBotMapper {
         return new SocialAccountBotDto(
                 entity.getId(),
                 entity.getUsername(),
-                entity.getUserId(),
                 entity.getApiKey(),
                 entity.getApiSecretKey(),
                 entity.getAccessToken(),
@@ -23,7 +22,6 @@ public class SocialAccountBotMapper {
     public SocialAccountBot toEntity(SocialAccountBotDto dto, User user) {
         SocialAccountBot entity = new SocialAccountBot();
         entity.setUsername(dto.getUsername());
-        entity.setUserId(dto.getUserId());
         entity.setApiKey(dto.getApiKey());
         entity.setApiSecretKey(dto.getApiSecretKey());
         entity.setAccessToken(dto.getAccessToken());

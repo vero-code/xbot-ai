@@ -71,11 +71,13 @@ public class SocialMediaBotMentionService {
      * Polls for tweets in the bot's account that mention the bot every 15 minutes.
      * Then filters them to keep only tweets sent from the selected user's account.
      */
-    @Scheduled(fixedDelay = 900000)
+    //@Scheduled(fixedDelay = 900000)
     public void pollMentions() {
         initOAuthServiceIfNeeded();
         try {
-            String botId = botPropertiesProvider.getPropertiesForCurrentUser().getUserID();
+            String username = botPropertiesProvider.getPropertiesForCurrentUser().getUsername();
+            String botId = getUserIdSilently(username);
+
             String url = "https://api.twitter.com/2/users/" + botId + "/mentions?tweet.fields=author_id";
             if (lastSeenMentionId != null) {
                 url += "&since_id=" + lastSeenMentionId;
@@ -154,7 +156,8 @@ public class SocialMediaBotMentionService {
             return;
         }
 
-        String userId = propertiesProvider.getPropertiesForCurrentUser().getUserID();
+        String username = propertiesProvider.getPropertiesForCurrentUser().getUsername();
+        String userId = getUserIdSilently(username);
 
         if (!tweetAuthorId.equals(userId)) {
             logger.info("Skipping tweet not sent by selected user. Tweet author_id: {}", tweetAuthorId);
