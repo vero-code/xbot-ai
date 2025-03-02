@@ -49,7 +49,11 @@ const DocumentationPage: React.FC = () => {
                             <p>3️⃣ Start the frontend (React UI)</p>
                             <pre className="code-block">
                                 cd frontend
+                            </pre>
+                            <pre className="code-block">
                                 npm install
+                            </pre>
+                            <pre className="code-block">
                                 npm run dev
                             </pre>
                         </section>
@@ -74,6 +78,7 @@ const DocumentationPage: React.FC = () => {
                                     <li><strong>GET /api/bot/trends</strong> — Fetch trending topics.</li>
                                     <li><strong>POST /api/bot/select-trend</strong> — Select a trend for generation.</li>
                                     <li><strong>GET /api/bot/generate-tweet</strong> — Generate an AI-powered tweet.</li>
+                                    <li><strong>POST /api/bot/post-tweet</strong> — Post a tweet.</li>
                                 </ul>
                             </ul>
                         </section>
