@@ -24,8 +24,7 @@ body {
 }
 
 .documentation-container {
-    width: 90%;
-    max-width: 1400px;
+    width: 100%;
     margin: 0 30px;
     padding: 40px;
     background: rgba(255, 255, 255, 0.1);
