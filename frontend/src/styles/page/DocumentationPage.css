@@ -20,7 +20,6 @@ body {
 #root {
     font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     max-width: 70%;
-    min-height: 100vh;
 }
 
 .documentation-container {
