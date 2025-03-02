@@ -2,7 +2,6 @@
 
 **XBot AI** is an **X-based intelligent agent** that integrates **Java Spring Boot, Gemini AI for getting trends and post generation, and blockchain logging on NEAR Testnet**. Users interact with the bot via **X mentions and replies**, enabling real-time trend analysis, AI-generated posts, and transparent blockchain logging.
 
----
 
 ## ✨ Features
 
@@ -14,7 +13,6 @@
 
 🎯 **This project was created for the** [One Trillion Agents Hackathon](https://devpost.com/software/xbot-ai).
 
----
 
 ## ⚙️ Architecture
 
@@ -71,7 +69,6 @@
 |---------------------------------------|------------------|-------------------------------|
 | **Gemini API (Google Cloud Console)** | gemini-1.5-flash | Get trends & generate post    |
 
----
 
 ## 📥 Installation
 
@@ -81,8 +78,6 @@
    git clone https://github.com/vero-git-hub/xbot-ai.git
    cd xbot-ai
    ```
-
----
 
 ### 2️⃣Start the Project (2 services need to be running):
 
@@ -252,7 +247,7 @@ To deploy it to your Testnet account, run:
 
 2. Set **Who can reply? → Only accounts you mention can reply** → Post
 
-3. Uncomment line 74:
+3. Uncomment line 88:
 
 ```bash
     src/main/java/org/example/xbotai/service/core/impl/SocialMediaBotMentionService.java
@@ -334,7 +329,6 @@ This line enables bot mention tracking.
 
 🔹 **Automate your social media posts securely with XBot AI!** 🚀
 
----
 
 ## 📡 API Endpoints
 
@@ -361,7 +355,6 @@ This line enables bot mention tracking.
 * Frontend UI: http://localhost:5173
 * H2 Database Console: http://localhost:8080/h2-console
 
----
 
 ## 🧠 Gemini AI Integration
 
@@ -377,7 +370,6 @@ This line enables bot mention tracking.
 
 5️⃣ Logs the interaction on **NEAR Testnet** for transparency.
 
----
 
 ## 🚀 Future Improvements
 
@@ -387,7 +379,6 @@ This line enables bot mention tracking.
 
 🔹 Multimedia post support (images, videos, polls).
 
----
 
 ## 📜 License
 

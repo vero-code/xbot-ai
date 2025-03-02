@@ -85,7 +85,7 @@ public class SocialMediaBotMentionService {
      * Polls for tweets in the bot's account that mention the bot every 15 minutes.
      * Then filters them to keep only tweets sent from the selected user's account.
      */
-    @Scheduled(fixedDelay = 900000)
+    //@Scheduled(fixedDelay = 900000)
     public void pollMentions() {
         initOAuthServiceIfNeeded();
         try {
