@@ -164,7 +164,7 @@ Fill in the fields with your credentials. How to find them?
 
 | Field              | Value |
 | -------------------|-------------------|
-| Username           | X account username  |
+| Username           | X account username (without @) |
 | API Key            | Consumer Keys: API Key     |
 | API Secret         | Consumer Keys: API Secret     |
 | Access Token       | Authentication Tokens: Access Token    |
@@ -175,17 +175,12 @@ Fill in the fields with your credentials. How to find them?
 
 * Retrieve the **Bearer Token** from the **Keys and tokens** tab
 
-* Use **Postman** or another API tool to make a request:
+* Use **Postman** or another API tool to make a request with **Bearer Token**:
 
 ```bash
    GET https://api.twitter.com/2/users/by/username/YOUR_USERNAME
    ```
 
-* Add the header:
-
-```bash
-   Authorization: Bearer YOUR_BEARER_TOKEN
-   ```
 * The response will contain an ```id``` field. Use this as **User ID** in the UI.
 
 9. Click **Save Settings → Back to Dashboard**
@@ -239,39 +234,36 @@ To deploy it to your Testnet account, run:
 
 #### 🟢 Step 1: Trigger the bot with a mention
 
-1. Open your X account and post:
+1. Open your X account and click "Post".
+2. Set **Who can reply? → Only accounts you mention can reply**.
+3. Send a post with text:
 
 ```bash
-    @[your_bot] trends
-   ```
+@[your_bot] trends
+```
 
-2. Set **Who can reply? → Only accounts you mention can reply** → Post
-
-3. Uncomment line 88:
+4. Uncomment line 88 in the `src/main/java/.../service/core/impl/SocialMediaBotMentionService.java` file:
 
 ```bash
-    src/main/java/org/example/xbotai/service/core/impl/SocialMediaBotMentionService.java
-   ```
-
-```bash
-    @Scheduled(fixedDelay = 900000)
-   ```
+@Scheduled(fixedDelay =  900000)
+```
 
 This line enables bot mention tracking.
 
 ❇️ API Free Plan has limitations. You can see them in [X Developer Platform](https://developer.twitter.com/en/portal/products) It's recommended to enable it only when everything is set up. ❇️
-
-4. Start both servers:
+ 
+5. Start both servers:
 
 ```bash
-    mvn spring-boot:run
-    npm run dev
-   ```
+mvn spring-boot:run
+npm run dev
+```
 
-5. Check if the bot responds:
+6. Check if the bot responds:
+
 ```bash
-   Enter your country to search for trends (United States, Canada)
-   ```
+Enter your  country  to  search  for  trends (United States,  Canada)
+```
 
 #### 🟢 Step 2: Provide a country for trend search
 
@@ -353,7 +345,10 @@ This line enables bot mention tracking.
 ### 🪪 Local Links
 
 * Frontend UI: http://localhost:5173
-* H2 Database Console: http://localhost:8080/h2-console
+
+* H2 Database Console: http://localhost:8080/h2-console:
+
+   - JDBC URL — jdbc:h2:file:./data/xbot-ai-db
 
 
 ## 🧠 Gemini AI Integration
