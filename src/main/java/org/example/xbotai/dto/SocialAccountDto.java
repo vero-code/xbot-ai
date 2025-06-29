@@ -14,6 +14,7 @@ public class SocialAccountDto {
     private String userId;
     private String apiKey;
     private String apiSecretKey;
+    private String jwtToken;
     private String accessToken;
     private String accessTokenSecret;
 }

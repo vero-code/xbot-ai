@@ -80,12 +80,17 @@ const SocialAccountPage: React.FC = () => {
         try {
             await API.post("/social-account/save", data, config);
             setMessage("Settings saved successfully!");
-        } catch (error: unknown) {
-            let errorMessage = "Unknown error";
-            if (error instanceof Error) {
-                errorMessage = error.message;
+        } catch (error: any) {
+            console.error("❌ Error saving settings:", error);
+
+            if (error.response) {
+                console.log("🔴 Server responded with:", error.response.status, error.response.data);
+            } else if (error.request) {
+                console.log("⚠️ No response received:", error.request);
+            } else {
+                console.log("⚠️ Error setting up request:", error.message);
             }
-            console.error("Error saving settings:", errorMessage);
+            
             setMessage("Error saving settings. Please try again.");
         }
     };

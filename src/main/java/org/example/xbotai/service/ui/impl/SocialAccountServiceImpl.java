@@ -33,8 +33,25 @@ public class SocialAccountServiceImpl implements SocialAccountService {
     @Override
     public SocialAccountDto saveSocialAccount(SocialAccountDto dto) {
         User currentUser = getCurrentUser();
-        SocialAccount entity = mapper.toEntity(dto, currentUser);
-        SocialAccount saved = repository.save(entity);
+
+        SocialAccount existingAccount = repository.findByUser(currentUser).orElse(null);
+
+        SocialAccount accountToSave;
+        if (existingAccount != null) {
+            existingAccount.setUsername(dto.getUsername());
+            existingAccount.setUserId(dto.getUserId());
+            existingAccount.setApiKey(dto.getApiKey());
+            existingAccount.setApiSecretKey(dto.getApiSecretKey());
+            existingAccount.setJwtToken(dto.getJwtToken());
+            existingAccount.setAccessToken(dto.getAccessToken());
+            existingAccount.setAccessTokenSecret(dto.getAccessTokenSecret());
+
+            accountToSave = existingAccount;
+        } else {
+            accountToSave = mapper.toEntity(dto, currentUser);
+        }
+
+        SocialAccount saved = repository.save(accountToSave);
         return mapper.toDto(saved);
     }
 

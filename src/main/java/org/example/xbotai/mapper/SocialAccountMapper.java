@@ -15,6 +15,7 @@ public class SocialAccountMapper {
                 entity.getUserId(),
                 entity.getApiKey(),
                 entity.getApiSecretKey(),
+                entity.getJwtToken(),
                 entity.getAccessToken(),
                 entity.getAccessTokenSecret()
         );
@@ -26,6 +27,7 @@ public class SocialAccountMapper {
         entity.setUserId(dto.getUserId());
         entity.setApiKey(dto.getApiKey());
         entity.setApiSecretKey(dto.getApiSecretKey());
+        entity.setJwtToken(dto.getJwtToken());
         entity.setAccessToken(dto.getAccessToken());
         entity.setAccessTokenSecret(dto.getAccessTokenSecret());
         entity.setUser(user);
