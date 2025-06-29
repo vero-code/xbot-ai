@@ -219,10 +219,9 @@ public class SocialMediaBotMentionService {
                     logger.error("Error calling trends API", e);
                 }
             } else if (text.toLowerCase().contains(TREND_COMMAND) && text.contains(botMention)) {
-                logger.info("Detected 'trend' command in tweet: {}", text);
+                logger.info("✅ Detected 'trend' command in tweet: {}", text);
 
                 String selectedTrend = SocialMediaCommandParser.parseAllWordsAfter(text, TREND_COMMAND);
-                logger.info("userTrend: {}", selectedTrend);
 
                 if (selectedTrend == null || selectedTrend.isBlank()) {
                     logger.info("Invalid trend specified, using default 'Hello world'");
@@ -263,6 +262,7 @@ public class SocialMediaBotMentionService {
         trendsCommandResponder.displayTrends(tweetId, trends);
     }
 
+    /** Processing the trend selection command. */
     private void handleTrendSelectionAndGeneration(String tweetId, String userId, String selectedTrend) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -273,11 +273,20 @@ public class SocialMediaBotMentionService {
         String response = restTemplate.postForObject(url, requestBody, String.class);
         logger.info("Select trend response: {}", response);
 
-        String generateTweetUrl = BACKEND_URL + "/api/bot/generate-tweet?userId=" + userId;
-        String generatedTweetResponse = restTemplate.getForObject(generateTweetUrl, String.class);
+        String generatedTweetResponse = fetchGeneratedTweet(userId);
         logger.info("Generated tweet: {}", generatedTweetResponse);
 
         handlePostTweet(tweetId, userId, generatedTweetResponse);
+    }
+
+    /** Calls the backend to generate a tweet. */
+    private String fetchGeneratedTweet(String userId) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // TODO: add JWT
+
+        String generateTweetUrl = BACKEND_URL + "/api/bot/generate-tweet?userId=" + userId;
+        return restTemplate.getForObject(generateTweetUrl, String.class);
     }
 
     /**

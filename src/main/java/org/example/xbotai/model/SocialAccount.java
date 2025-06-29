@@ -20,6 +20,10 @@ public class SocialAccount {
     private String userId;
     private String apiKey;
     private String apiSecretKey;
+
+    @Column(length = 1000)
+    private String jwtToken;
+
     private String accessToken;
     private String accessTokenSecret;
 

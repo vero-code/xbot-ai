@@ -150,16 +150,16 @@ Add the **generated secret key** to ```src/main/resources/application.properties
 
 Fill in the fields with your credentials. How to find them?
 
-1. **Log in or sign up** on [X Developer Platform](https://developer.x.com/en)
-2. Go to [Developer Dashboard](https://developer.twitter.com/en/portal/dashboard)
-3. In the left sidebar, click **Projects & Apps**, and select your project (default one)
+1. **Log in or sign up** on [X Developer Platform](https://developer.x.com/en).
+2. Go to [Developer Dashboard](https://developer.twitter.com/en/portal/dashboard).
+3. In the left sidebar, click **Projects & Apps**, and select your project (default one).
 4. In the **User authentication settings** block, click **Edit and configure**:
 * **App permissions:** ```Read and write```
 * **Type of App:** ```Web App, Automated App, or Bot```
 * **App info:**
   * **Callback URI / Redirect URL:** ```http://localhost:8080/auth/callback```
   * **Website URL:** *(Any valid URL, e.g., GitHub repo)*
-5. Click **Save**
+5. Click **Save**.
 6. Generate keys in Keys and Tokens tab:
 
 | Field              | Value |
@@ -167,6 +167,7 @@ Fill in the fields with your credentials. How to find them?
 | Username           | X account username (without @) |
 | API Key            | Consumer Keys: API Key     |
 | API Secret         | Consumer Keys: API Secret     |
+| Bearer Token       | Authentication Tokens: Bearer Token     |
 | Access Token       | Authentication Tokens: Access Token    |
 | Access Token Secret| Authentication Tokens: Access Token Secret     |
 
@@ -183,7 +184,7 @@ Fill in the fields with your credentials. How to find them?
 
 * The response will contain an ```id``` field. Use this as **User ID** in the UI.
 
-9. Click **Save Settings → Back to Dashboard**
+9. Click **Save Settings → Back to Dashboard**.
 
 ---
 
