@@ -31,7 +31,7 @@ const SocialAccountPage: React.FC = () => {
                     }
                 };
 
-                const userRes = await API.get("/social-account/me", config);
+                const userRes = await API.get("/users/me", config);
                 const userIdFromProfile = userRes.data.id;
 
                 const response = await API.get(`/social-account/${userIdFromProfile}`, config);

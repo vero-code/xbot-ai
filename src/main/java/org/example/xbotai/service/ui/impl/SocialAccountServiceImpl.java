@@ -1,6 +1,9 @@
 package org.example.xbotai.service.ui.impl;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.example.xbotai.dto.SocialAccountDto;
 import org.example.xbotai.mapper.SocialAccountMapper;
 import org.example.xbotai.model.SocialAccount;
@@ -34,19 +37,21 @@ public class SocialAccountServiceImpl implements SocialAccountService {
     public SocialAccountDto saveSocialAccount(SocialAccountDto dto) {
         User currentUser = getCurrentUser();
 
-        SocialAccount existingAccount = repository.findByUser(currentUser).orElse(null);
+        Optional<SocialAccount> existingOpt = repository.findByUser(currentUser);
 
         SocialAccount accountToSave;
-        if (existingAccount != null) {
-            existingAccount.setUsername(dto.getUsername());
-            existingAccount.setUserId(dto.getUserId());
-            existingAccount.setApiKey(dto.getApiKey());
-            existingAccount.setApiSecretKey(dto.getApiSecretKey());
-            existingAccount.setJwtToken(dto.getJwtToken());
-            existingAccount.setAccessToken(dto.getAccessToken());
-            existingAccount.setAccessTokenSecret(dto.getAccessTokenSecret());
+        if (existingOpt.isPresent()) {
+            SocialAccount existing = existingOpt.get();
 
-            accountToSave = existingAccount;
+            existing.setUsername(dto.getUsername());
+            existing.setUserId(dto.getUserId());
+            existing.setApiKey(dto.getApiKey());
+            existing.setApiSecretKey(dto.getApiSecretKey());
+            existing.setJwtToken(dto.getJwtToken());
+            existing.setAccessToken(dto.getAccessToken());
+            existing.setAccessTokenSecret(dto.getAccessTokenSecret());
+
+            accountToSave = existing;
         } else {
             accountToSave = mapper.toEntity(dto, currentUser);
         }

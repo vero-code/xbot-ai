@@ -2,17 +2,10 @@ package org.example.xbotai.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.xbotai.dto.SocialAccountDto;
-import org.example.xbotai.dto.UserProfileDto;
 import org.example.xbotai.service.ui.SocialAccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.example.xbotai.model.User;
-import org.example.xbotai.service.ui.UserService;
-import org.example.xbotai.mapper.UserMapper;
 
 @RestController
 @RequestMapping("/api/social-account")
@@ -20,8 +13,6 @@ import org.example.xbotai.mapper.UserMapper;
 public class SocialAccountController {
 
     private final SocialAccountService socialAccountService;
-    private final UserService userService;
-    private final UserMapper userMapper;
 
     @PostMapping("/save")
     public ResponseEntity<SocialAccountDto> saveSocialAccount(@RequestBody SocialAccountDto dto) {
@@ -33,15 +24,5 @@ public class SocialAccountController {
     public ResponseEntity<SocialAccountDto> getSocialAccount(@PathVariable Long userId) {
         SocialAccountDto dto = socialAccountService.getSocialAccountByUserId(userId);
         return ResponseEntity.ok(dto);
-    }
-
-    @GetMapping("/me")
-    public ResponseEntity<UserProfileDto> getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userService.findByUsername(username)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
-
-        UserProfileDto profileDto = userMapper.toProfileDto(user);
-        return ResponseEntity.ok(profileDto);
     }
 }

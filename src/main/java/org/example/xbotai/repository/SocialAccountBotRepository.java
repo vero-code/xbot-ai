@@ -1,6 +1,7 @@
 package org.example.xbotai.repository;
 
 import org.example.xbotai.model.SocialAccountBot;
+import org.example.xbotai.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +11,6 @@ import java.util.Optional;
 public interface SocialAccountBotRepository extends JpaRepository<SocialAccountBot, Long> {
 
     Optional<SocialAccountBot> findByUser_Id(Long userId);
+
+    Optional<SocialAccountBot> findByUser(User user);
 }

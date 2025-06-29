@@ -1,6 +1,9 @@
 package org.example.xbotai.service.ui.impl;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.example.xbotai.dto.SocialAccountBotDto;
 import org.example.xbotai.mapper.SocialAccountBotMapper;
 import org.example.xbotai.model.SocialAccountBot;
@@ -33,8 +36,27 @@ public class SocialAccountBotServiceImpl implements SocialAccountBotService {
     @Override
     public SocialAccountBotDto saveSocialAccount(SocialAccountBotDto dto) {
         User currentUser = getCurrentUser();
-        SocialAccountBot entity = mapper.toEntity(dto, currentUser);
-        SocialAccountBot saved = repository.save(entity);
+
+        Optional<SocialAccountBot> existingOpt = repository.findByUser(currentUser);
+
+        SocialAccountBot accountToSave;
+        if (existingOpt.isPresent()) {
+            SocialAccountBot existing = existingOpt.get();
+
+            existing.setUsername(dto.getUsername());
+            existing.setUserId(dto.getUserId());
+            existing.setApiKey(dto.getApiKey());
+            existing.setApiSecretKey(dto.getApiSecretKey());
+            existing.setJwtToken(dto.getJwtToken());
+            existing.setAccessToken(dto.getAccessToken());
+            existing.setAccessTokenSecret(dto.getAccessTokenSecret());
+
+            accountToSave = existing;
+        } else {
+            accountToSave = mapper.toEntity(dto, currentUser);
+        }
+
+        SocialAccountBot saved = repository.save(accountToSave);
         return mapper.toDto(saved);
     }
 

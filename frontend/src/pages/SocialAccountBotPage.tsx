@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/page/SocialAccountPage.css";
 import API from "../api.ts";
 import { useNavigate } from "react-router-dom";
@@ -8,11 +8,49 @@ const SocialAccountBotPage: React.FC = () => {
     const [userId, setUserId] = useState("");
     const [apiKey, setApiKey] = useState("");
     const [apiSecretKey, setApiSecretKey] = useState("");
+    const [jwtToken, setJwtToken] = useState("");
     const [accessToken, setAccessToken] = useState("");
     const [accessTokenSecret, setAccessTokenSecret] = useState("");
     const [message, setMessage] = useState<string | null>(null);
 
     const navigate = useNavigate();
+
+    // ✅ Loading saved values
+    useEffect(() => {
+        const fetchData = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+
+            try {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                };
+
+                const userRes = await API.get("/users/me", config);
+                const userIdFromProfile = userRes.data.id;
+
+                const response = await API.get(`/social-account-bot/${userIdFromProfile}`, config);
+                const data = response.data;
+
+                setUsername(data.username || "");
+                setUserId(data.userId || "");
+                setApiKey(data.apiKey || "");
+                setApiSecretKey(data.apiSecretKey || "");
+                setJwtToken(data.jwtToken || "");
+                setAccessToken(data.accessToken || "");
+                setAccessTokenSecret(data.accessTokenSecret || "");
+            } catch (err) {
+                console.error("Error loading social account:", err);
+            }
+        };
+
+        fetchData();
+    }, [navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,6 +72,7 @@ const SocialAccountBotPage: React.FC = () => {
             userId,
             apiKey,
             apiSecretKey,
+            jwtToken,
             accessToken,
             accessTokenSecret,
         };
@@ -41,12 +80,17 @@ const SocialAccountBotPage: React.FC = () => {
         try {
             await API.post("/social-account-bot/save", data, config);
             setMessage("Settings saved successfully!");
-        } catch (error: unknown) {
-            let errorMessage = "Unknown error";
-            if (error instanceof Error) {
-                errorMessage = error.message;
+        } catch (error: any) {
+            console.error("❌ Error saving settings:", error);
+
+            if (error.response) {
+                console.log("🔴 Server responded with:", error.response.status, error.response.data);
+            } else if (error.request) {
+                console.log("⚠️ No response received:", error.request);
+            } else {
+                console.log("⚠️ Error setting up request:", error.message);
             }
-            console.error("Error saving settings:", errorMessage);
+            
             setMessage("Error saving settings. Please try again.");
         }
     };
@@ -67,9 +111,10 @@ const SocialAccountBotPage: React.FC = () => {
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Username"
+                            placeholder=" "
                             required
                         />
+                        <label htmlFor="username">Username</label>
                     </div>
                     <div className="form-group">
                         <input
@@ -78,9 +123,10 @@ const SocialAccountBotPage: React.FC = () => {
                             type="text"
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
-                            placeholder="User ID"
+                            placeholder=" "
                             required
                         />
+                        <label htmlFor="userId">User ID</label>
                     </div>
                     <div className="form-group">
                         <input
@@ -89,9 +135,10 @@ const SocialAccountBotPage: React.FC = () => {
                             type="text"
                             value={apiKey}
                             onChange={(e) => setApiKey(e.target.value)}
-                            placeholder="API Key"
+                            placeholder=" "
                             required
                         />
+                        <label htmlFor="apiKey">API Key</label>
                     </div>
                     <div className="form-group">
                         <input
@@ -100,9 +147,21 @@ const SocialAccountBotPage: React.FC = () => {
                             type="text"
                             value={apiSecretKey}
                             onChange={(e) => setApiSecretKey(e.target.value)}
-                            placeholder="API Secret"
+                            placeholder=" "
                             required
                         />
+                        <label htmlFor="apiSecretKey">API Secret</label>
+                    </div>
+                    <div className="form-group">
+                        <input
+                            className="social-input"
+                            id="jwtToken"
+                            type="text"
+                            value={jwtToken}
+                            onChange={(e) => setJwtToken(e.target.value)}
+                            placeholder=" "
+                        />
+                        <label htmlFor="jwtToken">JWT Token (Bearer)</label>
                     </div>
                     <div className="form-group">
                         <input
@@ -111,9 +170,10 @@ const SocialAccountBotPage: React.FC = () => {
                             type="text"
                             value={accessToken}
                             onChange={(e) => setAccessToken(e.target.value)}
-                            placeholder="Access Token"
+                            placeholder=" "
                             required
                         />
+                        <label htmlFor="accessToken">Access Token</label>
                     </div>
                     <div className="form-group">
                         <input
@@ -122,13 +182,14 @@ const SocialAccountBotPage: React.FC = () => {
                             type="text"
                             value={accessTokenSecret}
                             onChange={(e) => setAccessTokenSecret(e.target.value)}
-                            placeholder="Access Token Secret"
+                            placeholder=" "
                             required
                         />
+                        <label htmlFor="accessTokenSecret">Access Token Secret</label>
                     </div>
                     <div className="button-group">
-                        <button type="submit" className="submit-button">Save Settings</button>
                         <button type="button" onClick={() => navigate("/")}>⬅ Back to Dashboard</button>
+                        <button type="submit" className="submit-button">Save Settings</button>
                     </div>
                 </form>
                 {message && <p className={message.includes("successfully") ? "success" : "error"}>{message}</p>}
