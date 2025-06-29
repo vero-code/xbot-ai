@@ -1,6 +1,7 @@
 package org.example.xbotai.mapper;
 
 import org.example.xbotai.dto.UserDto;
+import org.example.xbotai.dto.UserProfileDto;
 import org.example.xbotai.model.User;
 import org.springframework.stereotype.Component;
 
@@ -18,5 +19,13 @@ public class UserMapper {
         user.setEmail(userDto.getEmail());
 
         return user;
+    }
+
+    public UserProfileDto toProfileDto(User user) {
+        return new UserProfileDto(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail()
+        );
     }
 }

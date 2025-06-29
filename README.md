@@ -167,7 +167,7 @@ Fill in the fields with your credentials. How to find them?
 | Username           | X account username (without @) |
 | API Key            | Consumer Keys: API Key     |
 | API Secret         | Consumer Keys: API Secret     |
-| Bearer Token       | Authentication Tokens: Bearer Token     |
+| JWT Token (Bearer) | Authentication Tokens: Bearer Token     |
 | Access Token       | Authentication Tokens: Access Token    |
 | Access Token Secret| Authentication Tokens: Access Token Secret     |
 
