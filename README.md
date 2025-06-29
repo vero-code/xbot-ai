@@ -242,7 +242,7 @@ To deploy it to your Testnet account, run:
 @[your_bot] trends
 ```
 
-4. Uncomment line 88 in the `src/main/java/.../service/core/impl/SocialMediaBotMentionService.java` file:
+4. Uncomment line in the `src/main/java/.../service/core/impl/SocialMediaBotMentionService.java` file:
 
 ```bash
 @Scheduled(fixedDelay =  900000)

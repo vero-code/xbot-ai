@@ -11,12 +11,16 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import org.example.xbotai.config.SocialMediaBotProperties;
 import org.example.xbotai.config.SocialMediaUserProperties;
+import org.example.xbotai.model.ProcessedTweet;
 import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
+import org.example.xbotai.repository.ProcessedTweetRepository;
 import org.example.xbotai.service.core.SocialMediaService;
 import org.example.xbotai.util.SocialMediaCommandParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +31,9 @@ import java.util.Map;
 
 @Service
 public class SocialMediaBotMentionService {
+
+    public static final String TREND_COMMAND = "trend";
+    public static final String BACKEND_URL = "http://localhost:8080";
 
     private final SystemSocialMediaUserPropertiesProvider systemUserPropertiesProvider;
     private final SystemSocialMediaBotPropertiesProvider systemBotPropertiesProvider;
@@ -42,15 +49,19 @@ public class SocialMediaBotMentionService {
     private String botUsername;
     private String userUsername;
 
+    private final ProcessedTweetRepository processedTweetRepository;
+
     public SocialMediaBotMentionService(
             SystemSocialMediaUserPropertiesProvider propertiesProvider,
                                      SystemSocialMediaBotPropertiesProvider systemBotPropertiesProvider,
                                      SocialMediaService socialMediaService,
-                                     TrendsCommandResponder trendsCommandResponder) {
+                                     TrendsCommandResponder trendsCommandResponder,
+                                     ProcessedTweetRepository processedTweetRepository) {
         this.systemUserPropertiesProvider = propertiesProvider;
         this.systemBotPropertiesProvider = systemBotPropertiesProvider ;
         this.socialMediaService = socialMediaService;
         this.trendsCommandResponder = trendsCommandResponder;
+        this.processedTweetRepository = processedTweetRepository;
     }
 
     private void initOAuthServiceIfNeeded() {
@@ -161,11 +172,17 @@ public class SocialMediaBotMentionService {
      */
     private void processSingleTweet(JsonNode tweet) {
         String tweetId = tweet.get("id").asText();
+        if (processedTweetRepository.existsByTweetId(tweetId)) {
+            logger.info("Tweet {} already processed, skipping.", tweetId);
+            return;
+        }
+
         String text = tweet.get("text").asText();
 
+        // If the author of a tweet does not match the author_id, the bot will simply skip it.
         String tweetAuthorId = tweet.has("author_id") ? tweet.get("author_id").asText() : null;
         if (tweetAuthorId == null) {
-            logger.warn("Tweet without author_id, skipping: " + tweet.toString());
+            logger.warn("Tweet without author_id, skipping: {}", tweet);
             return;
         }
 
@@ -177,75 +194,112 @@ public class SocialMediaBotMentionService {
         }
 
         String botMention = "@" + botUsername;
-        if (text.toLowerCase().contains("trends") && text.contains(botMention)) {
-            logger.info("Detected 'trends' command in tweet: {}", text);
-            trendsCommandResponder.askCountryForTrends(tweetId, text);
-        } else if (text.toLowerCase().contains("country") && text.contains(botMention)){
-            logger.info("Detected 'country' command in tweet: {}", text);
-            String userCountry = SocialMediaCommandParser.parseAllWordsAfterAsOne(text, "country");
-            logger.info("userCountry: {}", userCountry);
-            if (userCountry != null) {
-                logger.info("User specified country: {}", userCountry);
-            } else {
-                logger.info("No word found after 'country', using default 'united_states'");
-                userCountry = "united_states";
-            }
+        boolean handled = false;
 
-            try {
-                RestTemplate restTemplate = new RestTemplate();
-                String url = "http://localhost:8080/api/bot/trends?country=" + userCountry;
-                logger.info("Sending request to URL: {}", url);
-                List<String> trends = restTemplate.getForObject(url, List.class);
-                logger.info("Trends received: {}", trends);
-
-                trendsCommandResponder.displayTrends(tweetId, trends);
-            } catch (Exception e) {
-                logger.error("Error calling trends API", e);
-            }
-        } else if (text.toLowerCase().contains("trend") && text.contains(botMention)) {
-            logger.info("Detected 'trend' command in tweet: {}", text);
-
-            String selectedTrend = SocialMediaCommandParser.parseAllWordsAfter(text, "trend");
-            logger.info("userTrend: {}", selectedTrend);
-
-            if (selectedTrend == null) {
-                logger.info("Invalid trend specified, using default 'Hello world'");
-                selectedTrend = "Hello world";
-            }
-
-            try {
-                RestTemplate restTemplate = new RestTemplate();
-                String url = "http://localhost:8080/api/bot/select-trend";
-                Map<String, String> requestBody = new HashMap<>();
-                requestBody.put("userId", userId);
-                requestBody.put("trend", selectedTrend);
-                String response = restTemplate.postForObject(url, requestBody, String.class);
-                logger.info("Select trend response: {}", response);
-
-                String generateTweetUrl = "http://localhost:8080/api/bot/generate-tweet?userId=" + userId;
-                String generatedTweetResponse = restTemplate.getForObject(generateTweetUrl, String.class);
-                logger.info("Generated tweet: {}", generatedTweetResponse);
+        try {
+            if (text.toLowerCase().contains("trends") && text.contains(botMention)) {
+                logger.info("Detected 'trends' command in tweet: {}", text);
+                trendsCommandResponder.askCountryForTrends(tweetId, text);
+                handled = true;
+            } else if (text.toLowerCase().contains("country") && text.contains(botMention)){
+                logger.info("Detected 'country' command in tweet: {}", text);
+                String userCountry = SocialMediaCommandParser.parseAllWordsAfterAsOne(text, "country");
+                logger.info("userCountry: {}", userCountry);
+                if (userCountry != null) {
+                    logger.info("User specified country: {}", userCountry);
+                } else {
+                    logger.info("No word found after 'country', using default 'united_states'");
+                    userCountry = "united_states";
+                }
 
                 try {
-                    String urlPostTweet = "http://localhost:8080/api/bot/post-tweet";
-                    Map<String, String> requestBodyPostTweet = new HashMap<>();
-                    requestBodyPostTweet.put("userId", userId);
-                    requestBodyPostTweet.put("tweet", generatedTweetResponse);
-                    String responsePostTweet = restTemplate.postForObject(urlPostTweet, requestBodyPostTweet, String.class);
-                    logger.info("Post response: {}", responsePostTweet);
-
-                    String botAnswer = "The post was posted on your behalf. Contact me again!";
-                    trendsCommandResponder.displayGeneratedTweet(tweetId, botAnswer);
+                    handleCountryTrendRequest(tweetId, userCountry);
+                    handled = true;
                 } catch (Exception e) {
-                    logger.error("Error calling confirm post API", e);
+                    logger.error("Error calling trends API", e);
                 }
-            } catch (Exception e) {
-                logger.error("Error calling trend selection/generation API", e);
+            } else if (text.toLowerCase().contains(TREND_COMMAND) && text.contains(botMention)) {
+                logger.info("Detected 'trend' command in tweet: {}", text);
+
+                String selectedTrend = SocialMediaCommandParser.parseAllWordsAfter(text, TREND_COMMAND);
+                logger.info("userTrend: {}", selectedTrend);
+
+                if (selectedTrend == null || selectedTrend.isBlank()) {
+                    logger.info("Invalid trend specified, using default 'Hello world'");
+                    selectedTrend = "Hello world";
+                }
+
+                try {
+                    handleTrendSelectionAndGeneration(tweetId, userId, selectedTrend);
+                    handled = true;
+                } catch (Exception e) {
+                    logger.error("Error calling trend selection/generation API", e);
+                }
+            } else {
+                logger.info("Tweet does not contain required command, skipping: {}", text);
             }
-        } else {
-            logger.info("Tweet does not contain required command, skipping: {}", text);
+        } catch (Exception e) {
+            logger.error("Error processing tweet: {}", tweetId, e);
         }
-        updateLastSeenMentionId(tweetId);
+
+        if(handled) {
+            processedTweetRepository.save(new ProcessedTweet(tweetId, userId));
+            updateLastSeenMentionId(tweetId);
+        }
+    }
+
+    private void handleCountryTrendRequest(String tweetId, String userCountry) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = BACKEND_URL + "/api/bot/trends?country=" + userCountry;
+        logger.info("Sending request to URL: {}", url);
+        List<String> trends = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<String>>() {}
+        ).getBody();
+        logger.info("Trends received: {}", trends);
+
+        trendsCommandResponder.displayTrends(tweetId, trends);
+    }
+
+    private void handleTrendSelectionAndGeneration(String tweetId, String userId, String selectedTrend) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        String url = BACKEND_URL + "/api/bot/select-trend";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("userId", userId);
+        requestBody.put(TREND_COMMAND, selectedTrend);
+        String response = restTemplate.postForObject(url, requestBody, String.class);
+        logger.info("Select trend response: {}", response);
+
+        String generateTweetUrl = BACKEND_URL + "/api/bot/generate-tweet?userId=" + userId;
+        String generatedTweetResponse = restTemplate.getForObject(generateTweetUrl, String.class);
+        logger.info("Generated tweet: {}", generatedTweetResponse);
+
+        handlePostTweet(tweetId, userId, generatedTweetResponse);
+    }
+
+    /**
+     * Handles posting the generated tweet and responding to the user.
+     */
+    private boolean handlePostTweet(String tweetId, String userId, String generatedTweetResponse) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String urlPostTweet = BACKEND_URL + "/api/bot/post-tweet";
+            Map<String, String> requestBodyPostTweet = new HashMap<>();
+            requestBodyPostTweet.put("userId", userId);
+            requestBodyPostTweet.put("tweet", generatedTweetResponse);
+            String responsePostTweet = restTemplate.postForObject(urlPostTweet, requestBodyPostTweet, String.class);
+            logger.info("Post response: {}", responsePostTweet);
+
+            String botAnswer = "The post was posted on your behalf. Contact me again!";
+            trendsCommandResponder.displayGeneratedTweet(tweetId, botAnswer);
+            return true;
+        } catch (Exception e) {
+            logger.error("Error calling confirm post API", e);
+            return false;
+        }
     }
 
     /**
