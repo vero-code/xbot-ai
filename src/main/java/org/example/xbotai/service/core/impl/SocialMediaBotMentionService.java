@@ -9,6 +9,8 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
+
+import org.example.xbotai.config.ApiUrls;
 import org.example.xbotai.config.SocialMediaBotProperties;
 import org.example.xbotai.config.SocialMediaUserProperties;
 import org.example.xbotai.model.ProcessedTweet;
@@ -33,7 +35,6 @@ import java.util.Map;
 public class SocialMediaBotMentionService {
 
     public static final String TREND_COMMAND = "trend";
-    public static final String BACKEND_URL = "http://localhost:8080";
 
     private final SystemSocialMediaUserPropertiesProvider systemUserPropertiesProvider;
     private final SystemSocialMediaBotPropertiesProvider systemBotPropertiesProvider;
@@ -102,7 +103,7 @@ public class SocialMediaBotMentionService {
         try {
             String botId = systemBotPropertiesProvider.getProperties().getUserID();
 
-            String url = "https://api.twitter.com/2/users/" + botId + "/mentions?tweet.fields=author_id";
+            String url = ApiUrls.X_API_BASE + "/users/" + botId + "/mentions?tweet.fields=author_id";
             if (lastSeenMentionId != null) {
                 url += "&since_id=" + lastSeenMentionId;
             }
@@ -125,7 +126,7 @@ public class SocialMediaBotMentionService {
      */
     private void fallbackToRecentSearch(String botId) {
         try {
-            String fallbackUrl = "https://api.twitter.com/2/tweets/search/recent?query=%40"
+            String fallbackUrl = ApiUrls.X_TWEETS_SEARCH_RECENT + "?query=%40"
                     + botUsername
                     + "&max_results=10&tweet.fields=author_id";
             OAuthRequest fallbackRequest = createOAuthRequest(fallbackUrl);
@@ -249,7 +250,7 @@ public class SocialMediaBotMentionService {
 
     private void handleCountryTrendRequest(String tweetId, String userCountry) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = BACKEND_URL + "/api/bot/trends?country=" + userCountry;
+        String url = ApiUrls.BACKEND_URL + "/api/bot/trends?country=" + userCountry;
         logger.info("Sending request to URL: {}", url);
         List<String> trends = restTemplate.exchange(
             url,
@@ -266,7 +267,7 @@ public class SocialMediaBotMentionService {
     private void handleTrendSelectionAndGeneration(String tweetId, String userId, String selectedTrend) {
         RestTemplate restTemplate = new RestTemplate();
 
-        String url = BACKEND_URL + "/api/bot/select-trend";
+        String url = ApiUrls.BACKEND_URL + "/api/bot/select-trend";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("userId", userId);
         requestBody.put(TREND_COMMAND, selectedTrend);
@@ -285,7 +286,7 @@ public class SocialMediaBotMentionService {
 
         // TODO: add JWT
 
-        String generateTweetUrl = BACKEND_URL + "/api/bot/generate-tweet?userId=" + userId;
+        String generateTweetUrl = ApiUrls.BACKEND_URL + "/api/bot/generate-tweet?userId=" + userId;
         return restTemplate.getForObject(generateTweetUrl, String.class);
     }
 
@@ -295,7 +296,7 @@ public class SocialMediaBotMentionService {
     private boolean handlePostTweet(String tweetId, String userId, String generatedTweetResponse) {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String urlPostTweet = BACKEND_URL + "/api/bot/post-tweet";
+            String urlPostTweet = ApiUrls.BACKEND_URL + "/api/bot/post-tweet";
             Map<String, String> requestBodyPostTweet = new HashMap<>();
             requestBodyPostTweet.put("userId", userId);
             requestBodyPostTweet.put("tweet", generatedTweetResponse);
@@ -317,38 +318,6 @@ public class SocialMediaBotMentionService {
     private void updateLastSeenMentionId(String tweetId) {
         if (lastSeenMentionId == null || Long.parseLong(tweetId) > Long.parseLong(lastSeenMentionId)) {
             lastSeenMentionId = tweetId;
-        }
-    }
-
-    /**
-     * Gets the X user ID by username.
-     */
-    private String getUserId(String username) throws Exception {
-        String url = "https://api.twitter.com/2/users/by/username/" + username;
-        OAuthRequest request = createOAuthRequest(url);
-        Response response = oAuthService.execute(request);
-        if (response.getCode() == 200) {
-            JsonNode root = objectMapper.readTree(response.getBody());
-            if (root.has("data")) {
-                return root.get("data").get("id").asText();
-            } else {
-                throw new Exception("User not found in response.");
-            }
-        } else {
-            throw new Exception("Error getting user ID: " +
-                    response.getCode() + " " + response.getBody());
-        }
-    }
-
-    /**
-     * Helper method to get user ID without throwing an exception (returns null on error).
-     */
-    private String getUserIdSilently(String username) {
-        try {
-            return getUserId(username);
-        } catch (Exception e) {
-            logger.error("Error getting user ID silently for username: " + username, e);
-            return null;
         }
     }
 }

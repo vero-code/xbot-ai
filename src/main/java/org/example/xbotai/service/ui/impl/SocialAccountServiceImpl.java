@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 import java.util.Optional;
 
-import org.example.xbotai.config.ExternalApiUrls;
+import org.example.xbotai.config.ApiUrls;
 import org.example.xbotai.dto.SocialAccountDto;
 import org.example.xbotai.mapper.SocialAccountMapper;
 import org.example.xbotai.model.SocialAccount;
@@ -85,9 +85,18 @@ public class SocialAccountServiceImpl implements SocialAccountService {
                 .orElseThrow(() -> new IllegalArgumentException("No default social account found"));
     }
 
+    /**
+     * Retrieves the X user ID by username via Twitter API.
+     * Uses Bearer Token authorization.
+     *
+     * @param username The X account username (user's or bot's account).
+     * @param bearerToken The header containing the App Bearer Token.
+     * @return user ID as string.
+     * @throws ResponseStatusException if user not found or Twitter API fails.
+     */
     @Override
     public String fetchUserIdByUsername(String username, String bearerToken) {
-        String url = ExternalApiUrls.X_USER_BY_USERNAME + username;
+        String url = ApiUrls.X_USER_BY_USERNAME + username;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(bearerToken);

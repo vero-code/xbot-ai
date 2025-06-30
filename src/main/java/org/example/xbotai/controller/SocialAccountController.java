@@ -20,6 +20,7 @@ public class SocialAccountController {
     @PostMapping("/save")
     public ResponseEntity<SocialAccountDto> saveSocialAccount(@RequestBody SocialAccountDto dto) {
         SocialAccountDto savedDto = socialAccountService.saveSocialAccount(dto);
+        System.out.println("✅ SocialAccount saved: username=" + savedDto.getUsername());
         return new ResponseEntity<>(savedDto, HttpStatus.CREATED);
     }
 
@@ -29,18 +30,13 @@ public class SocialAccountController {
         return ResponseEntity.ok(dto);
     }
 
-    /**
-     * Retrieves the user ID for a given X username.
-     * @param username The X account username (user's or bot's account).
-     * @param authHeader The authorization header containing the App Bearer Token.
-     * @return The map will have a single entry: "userId" mapped to the retrieved user ID string.
-     */
     @GetMapping("/get-user-id")
     public ResponseEntity<Map<String, String>> getUserIdByUsername(
         @RequestParam String username,
-        @RequestHeader("Authorization") String authHeader) {
+        @RequestHeader("X-Token") String authHeader) {
         String bearerToken = authHeader.replace("Bearer ", "");
         String userId = socialAccountService.fetchUserIdByUsername(username, bearerToken);
+        System.out.println("✅ Retrieved userId from X API: " + userId);
         return ResponseEntity.ok(Map.of("userId", userId));
     }
 }

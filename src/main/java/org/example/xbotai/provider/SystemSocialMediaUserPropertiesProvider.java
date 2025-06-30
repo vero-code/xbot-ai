@@ -19,6 +19,7 @@ public class SystemSocialMediaUserPropertiesProvider {
         SocialMediaUserProperties props = new SocialMediaUserProperties();
         props.setApiKey(dto.getApiKey());
         props.setApiSecretKey(dto.getApiSecretKey());
+        props.setJwtToken(dto.getJwtToken());
         props.setAccessToken(dto.getAccessToken());
         props.setAccessTokenSecret(dto.getAccessTokenSecret());
         props.setUsername(dto.getUsername());

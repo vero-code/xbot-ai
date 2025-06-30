@@ -4,6 +4,7 @@ public class SocialMediaBotProperties implements SocialMediaProperties {
 
     private String apiKey;
     private String apiSecretKey;
+    private String jwtToken;
     private String accessToken;
     private String accessTokenSecret;
     private String username;
@@ -25,6 +26,15 @@ public class SocialMediaBotProperties implements SocialMediaProperties {
 
     public void setApiSecretKey(String apiSecretKey) {
         this.apiSecretKey = apiSecretKey;
+    }
+
+    @Override
+    public String getJwtToken() {
+        return jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
     }
 
     @Override

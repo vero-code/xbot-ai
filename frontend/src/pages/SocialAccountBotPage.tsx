@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/page/SocialAccountPage.css";
 import API from "../api.ts";
 import { useNavigate } from "react-router-dom";
+import { FiArrowLeft, FiSave } from "react-icons/fi";
 
 const SocialAccountBotPage: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -16,41 +17,70 @@ const SocialAccountBotPage: React.FC = () => {
     const navigate = useNavigate();
 
     // ✅ Loading saved values
+    const fetchData = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login");
+            return;
+        }
+
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const userRes = await API.get("/users/me", config);
+            const userIdFromProfile = userRes.data.id;
+
+            const response = await API.get(`/social-account-bot/${userIdFromProfile}`, config);
+            const data = response.data;
+
+            setUsername(data.username || "");
+            setUserId(data.userId || "");
+            setApiKey(data.apiKey || "");
+            setApiSecretKey(data.apiSecretKey || "");
+            setJwtToken(data.jwtToken || "");
+            setAccessToken(data.accessToken || "");
+            setAccessTokenSecret(data.accessTokenSecret || "");
+        } catch (err) {
+            console.error("Error loading social account:", err);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                navigate("/login");
-                return;
-            }
-
-            try {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                };
-
-                const userRes = await API.get("/users/me", config);
-                const userIdFromProfile = userRes.data.id;
-
-                const response = await API.get(`/social-account-bot/${userIdFromProfile}`, config);
-                const data = response.data;
-
-                setUsername(data.username || "");
-                setUserId(data.userId || "");
-                setApiKey(data.apiKey || "");
-                setApiSecretKey(data.apiSecretKey || "");
-                setJwtToken(data.jwtToken || "");
-                setAccessToken(data.accessToken || "");
-                setAccessTokenSecret(data.accessTokenSecret || "");
-            } catch (err) {
-                console.error("Error loading social account:", err);
-            }
-        };
-
         fetchData();
     }, [navigate]);
+
+    const fetchUserIdFromBackend = async (username: string, jwtToken: string): Promise<string> => {
+        const response = await API.get("/social-account-bot/get-user-id", {
+            params: { username },
+            headers: {
+                "X-Token": `Bearer ${jwtToken}`,
+            },
+        });
+        return response.data.userId;
+    };
+
+    const saveSocialAccountToBackend = async (
+        data: {
+            username: string;
+            userId: string;
+            apiKey: string;
+            apiSecretKey: string;
+            jwtToken: string;
+            accessToken: string;
+            accessTokenSecret: string;
+        },
+        token: string
+    ): Promise<void> => {
+        await API.post("/social-account-bot/save", data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -61,24 +91,29 @@ const SocialAccountBotPage: React.FC = () => {
             return;
         }
 
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        };
-
-        const data = {
-            username,
-            userId,
-            apiKey,
-            apiSecretKey,
-            jwtToken,
-            accessToken,
-            accessTokenSecret,
-        };
+        if (!username) {
+            setMessage("Username is required.");
+            return;
+        }
 
         try {
-            await API.post("/social-account-bot/save", data, config);
+            // 1. Get UserID by Username
+            const userId = await fetchUserIdFromBackend(username, jwtToken);
+
+            // 2. Collect all data
+            const data = {
+                username,
+                userId,
+                apiKey,
+                apiSecretKey,
+                jwtToken,
+                accessToken,
+                accessTokenSecret,
+            };
+
+            // 3. Save settings
+            await saveSocialAccountToBackend(data, token);
+            await fetchData();
             setMessage("Settings saved successfully!");
         } catch (error: any) {
             console.error("❌ Error saving settings:", error);
@@ -124,9 +159,9 @@ const SocialAccountBotPage: React.FC = () => {
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
                             placeholder=" "
-                            required
+                            disabled
                         />
-                        <label htmlFor="userId">User ID</label>
+                        <label htmlFor="userId">UserID saves on button press</label>
                     </div>
                     <div className="form-group">
                         <input
@@ -188,8 +223,12 @@ const SocialAccountBotPage: React.FC = () => {
                         <label htmlFor="accessTokenSecret">Access Token Secret</label>
                     </div>
                     <div className="button-group">
-                        <button type="button" onClick={() => navigate("/")}>⬅ Back to Dashboard</button>
-                        <button type="submit" className="submit-button">Save Settings</button>
+                        <button type="button" onClick={() => navigate("/")}>
+                            <FiArrowLeft size={20} />
+                        </button>
+                        <button type="submit" className="submit-button">
+                            <FiSave size={20} />
+                        </button>
                     </div>
                 </form>
                 {message && <p className={message.includes("successfully") ? "success" : "error"}>{message}</p>}

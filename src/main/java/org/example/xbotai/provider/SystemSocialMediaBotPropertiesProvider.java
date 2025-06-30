@@ -19,6 +19,7 @@ public class SystemSocialMediaBotPropertiesProvider {
         SocialMediaBotProperties props = new SocialMediaBotProperties();
         props.setApiKey(dto.getApiKey());
         props.setApiSecretKey(dto.getApiSecretKey());
+        props.setJwtToken(dto.getJwtToken());
         props.setAccessToken(dto.getAccessToken());
         props.setAccessTokenSecret(dto.getAccessTokenSecret());
         props.setUsername(dto.getUsername());
