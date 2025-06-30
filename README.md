@@ -165,26 +165,14 @@ Fill in the fields with your credentials. How to find them?
 | Field              | Value |
 | -------------------|-------------------|
 | Username           | X account username (without @) |
+| User ID            | Autofill after clicking the save settings button |
 | API Key            | Consumer Keys: API Key     |
 | API Secret         | Consumer Keys: API Secret     |
 | JWT Token (Bearer) | Authentication Tokens: Bearer Token     |
 | Access Token       | Authentication Tokens: Access Token    |
 | Access Token Secret| Authentication Tokens: Access Token Secret     |
 
-
-7. Get the User ID:
-
-* Retrieve the **Bearer Token** from the **Keys and tokens** tab
-
-* Use **Postman** or another API tool to make a request with **Bearer Token**:
-
-```bash
-   GET https://api.twitter.com/2/users/by/username/YOUR_USERNAME
-   ```
-
-* The response will contain an ```id``` field. Use this as **User ID** in the UI.
-
-9. Click **Save Settings → Back to Dashboard**.
+7. Click the **save settings button** and back button.
 
 ---
 
@@ -192,7 +180,7 @@ Fill in the fields with your credentials. How to find them?
 
 🔹 Click **"CONNECT BOT ACCOUNT X"** and follow the same steps as for the personal account.
 
-📌 Note: Use your **bot's username** when mentioning the bot (e.g., ```@your_bot```).
+📌 Note: Use your **bot's username** when mentioning the bot (e.g., ```@your_bot```) in your X account.
 
 ---
 

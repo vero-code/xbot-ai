@@ -51,7 +51,7 @@ const BlockchainConsolePage: React.FC = () => {
                     </ul>
                 )}
             </section>
-            <button onClick={() => navigate("/")}>⬅ Back to Dashboard</button>
+            <button className="blockchain-btn" onClick={() => navigate("/")}>⬅ Back to Dashboard</button>
         </div>
     );
 };

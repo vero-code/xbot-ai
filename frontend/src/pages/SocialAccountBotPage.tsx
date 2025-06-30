@@ -161,7 +161,7 @@ const SocialAccountBotPage: React.FC = () => {
                             placeholder=" "
                             disabled
                         />
-                        <label htmlFor="userId">UserID saves on button press</label>
+                        <label htmlFor="userId">User ID saves on button press</label>
                     </div>
                     <div className="form-group">
                         <input
@@ -223,10 +223,10 @@ const SocialAccountBotPage: React.FC = () => {
                         <label htmlFor="accessTokenSecret">Access Token Secret</label>
                     </div>
                     <div className="button-group">
-                        <button type="button" onClick={() => navigate("/")}>
+                        <button type="button" className="social-btn" onClick={() => navigate("/")}>
                             <FiArrowLeft size={20} />
                         </button>
-                        <button type="submit" className="submit-button">
+                        <button type="submit" className="social-btn submit-button">
                             <FiSave size={20} />
                         </button>
                     </div>

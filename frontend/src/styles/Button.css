@@ -9,7 +9,6 @@
     font-size: 14px;
     margin-left: 0;
     margin-bottom: 15px;
-    float: left;
     transition: all 0.3s ease-in-out;
 }
 
@@ -22,4 +21,32 @@
 .main-btn:active {
     transform: translateY(1px);
     box-shadow: 0 3px 10px rgba(41, 128, 185, 0.2);
+}
+
+.center-btn {
+    align-items: "center";
+    justify-content: "center";
+    gap: "8px";
+}
+
+button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #2980b9;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }

@@ -85,30 +85,3 @@ button:focus-visible {
 .glass-title {
   color: rgba(255, 255, 255, 0.6);
 }
-
-.form-group {
-  position: relative;
-  margin-bottom: 1.5rem;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 1.2rem 1rem 0.4rem;
-}
-
-.form-group label {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  color: #aaa;
-  transition: all 0.2s;
-  pointer-events: none;
-}
-
-.form-group input:focus + label,
-.form-group input:not(:placeholder-shown) + label {
-  top: 0.3rem;
-  left: 1rem;
-  font-size: 0.75rem;
-  color: #6ca0f6;
-}

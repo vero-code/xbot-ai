@@ -67,14 +67,23 @@ const LoginPage: React.FC = () => {
                     />
                 </div>
 
-                <button type="submit" className="main-btn action-btn">LOGIN</button>
+                <button type="submit"
+                    className="main-btn action-btn"
+                    style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                    }}
+                >
+                    LOGIN
+                </button>
                 <div className="form-text">
                     <span>... or register below 🔽 </span>
                 </div>
             </form>
 
             <button
-                className="bottom-btn"
+                className="center-btn"
                 onClick={() => navigate("/register")}
             >
                 REGISTER

@@ -150,7 +150,7 @@ const DocumentationPage: React.FC = () => {
                 </div>
             </main>
 
-            <button onClick={() => navigate("/")}>⬅ Back to Home</button>
+            <button className="docs-btn" onClick={() => navigate("/")}>⬅ Back to Home</button>
 
             <footer className="documentation-footer">
                 <p>&copy; 2025 XBot AI. All rights reserved.</p>

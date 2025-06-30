@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from "react-router-dom";
 import {useAuth} from "../contexts/AuthContext.tsx";
 import "../styles/page/HomePage.css";
+import { FiLogOut } from "react-icons/fi";
 
 const HomePage: React.FC = () => {
 
@@ -29,9 +30,16 @@ const HomePage: React.FC = () => {
                 </div>
             </div>
 
-            <button
-                className="main-btn action-btn" onClick={logout}>
-                ⬅️ LOGOUT
+            <button 
+                className="main-btn action-btn"
+                style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                    }}
+                onClick={logout}
+            >
+                <FiLogOut size={20} /> LOGOUT
             </button>
         </div>
     );

@@ -46,16 +46,32 @@ header p {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #aaa;
     font-size: 0.9em;
     font-weight: 500;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    transition: all 0.2s;
+    pointer-events: none;
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label {
+  top: 0.3rem;
+  left: 1rem;
+  font-size: 0.75rem;
+  color: #6ca0f6;
+}
+
+.form-group input {
+  width: 100%;
 }
 
 /* Inputs */
 .social-input {
     font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     width: 100%;
-    padding: 15px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
@@ -63,6 +79,7 @@ header p {
     font-size: 1em;
     transition: all 0.3s ease;
     box-sizing: border-box;
+    padding: 1.2rem 1rem 0.4rem;
 }
 
 .social-input::placeholder {
@@ -85,7 +102,7 @@ header p {
 }
 
 /* Buttons */
-button {
+.social-btn {
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -106,12 +123,12 @@ button {
     transform: translateY(-2px);
 }
 
-button[type="button"] {
+.social-btn[type="button"] {
     background: rgba(255, 255, 255, 0.1);
     color: white;
 }
 
-button[type="button"]:hover {
+.social-btn[type="button"]:hover {
     background: rgba(255, 255, 255, 0.2);
 }
 
@@ -143,7 +160,7 @@ p {
         font-size: 2em;
     }
 
-    button {
+    .social-btn {
         width: 100%;
         margin: 10px 0;
     }

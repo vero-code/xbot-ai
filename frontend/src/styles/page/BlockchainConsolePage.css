@@ -107,7 +107,7 @@ body {
     font-size: 0.85em;
 }
 
-button {
+.blockchain-btn {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -119,7 +119,7 @@ button {
     backdrop-filter: blur(5px);
 }
 
-button:hover {
+.blockchain-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
 }
