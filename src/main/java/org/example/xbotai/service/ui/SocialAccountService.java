@@ -9,4 +9,6 @@ public interface SocialAccountService {
     SocialAccountDto getSocialAccountByUserId(Long userId);
 
     SocialAccountDto getDefaultSocialAccount();
+
+    String fetchUserIdByUsername(String username, String bearerToken);
 }

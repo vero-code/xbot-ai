@@ -2,8 +2,10 @@ package org.example.xbotai.service.ui.impl;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
 import java.util.Optional;
 
+import org.example.xbotai.config.ExternalApiUrls;
 import org.example.xbotai.dto.SocialAccountDto;
 import org.example.xbotai.mapper.SocialAccountMapper;
 import org.example.xbotai.model.SocialAccount;
@@ -11,9 +13,17 @@ import org.example.xbotai.model.User;
 import org.example.xbotai.repository.SocialAccountRepository;
 import org.example.xbotai.repository.UserRepository;
 import org.example.xbotai.service.ui.SocialAccountService;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -73,5 +83,25 @@ public class SocialAccountServiceImpl implements SocialAccountService {
                 .findFirst()
                 .map(mapper::toDto)
                 .orElseThrow(() -> new IllegalArgumentException("No default social account found"));
+    }
+
+    @Override
+    public String fetchUserIdByUsername(String username, String bearerToken) {
+        String url = ExternalApiUrls.X_USER_BY_USERNAME + username;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(bearerToken);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+            Map<String, Object> data = (Map<String, Object>) response.getBody().get("data");
+            return (String) data.get("id");
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "X user not found: " + username);
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error calling X API: " + e.getStatusCode());
+        }
     }
 }
