@@ -3,7 +3,11 @@
 **XBot AI** is an **X-based intelligent agent** that integrates **Java Spring Boot, Gemini AI for getting trends and post generation, and blockchain logging on NEAR Testnet**. Users interact with the bot via **X mentions and replies**, enabling real-time trend analysis, AI-generated posts, and transparent blockchain logging.
 
 
-## ✨ Features
+## 🎯 Originally Submitted to
+
+[One Trillion Agents Hackathon](https://devpost.com/software/xbot-ai)
+
+### ✨ Core Features
 
 - **X (formerly Twitter) Integration:** Users can interact with the bot via **X mentions and replies**.
 - **Trending Topics Analysis:** Fetch **real-time trending topics** using **Gemini**.
@@ -11,23 +15,39 @@
 - **Blockchain Logging (NEAR Testnet):** Logs posts and interactions for transparency.
 - **React-Based UI:** A **dashboard** for managing accounts, checking blockchain logs.
 
-🎯 **This project was created for the** [One Trillion Agents Hackathon](https://devpost.com/software/xbot-ai).
+
+## 🚀 Extended for
+
+[PL_Genesis: Modular Worlds Hackathon](https://plgenesis.devspot.app/)
+
+### 🔧 New Features:
+
+- ✅ Bearer Token support: Replaced manual userId input with automatic retrieval via username and token.
+
+- ✅ Processed Tweet Tracking: Added DB-level deduplication of already-handled commands to prevent reprocessing.
+
+- ✅ UI Enhancements: Updated layout, auto-filled saved values, clearer labels and structure.
+
+- ✅ Reduced Redundant API Usage: Removed excess calls to X API (e.g., the country command and reply tweets after trend posts) to respect free-tier limits.
+
+- ✅ Local-only auth bypass: JWT validation was disabled for internal endpoints (`/api/bot/**`) to simplify local development during MVP stage.
 
 
 ## ⚙️ Architecture
 
 ### **1️⃣ Core Technologies**
-| **Technology**             | **Version** | **Usage** |
-|----------------------------|-------------|------------------------------------------------|
-| **Java 23+ (Spring Boot)** | v3.4.2      | Backend for fetching data from X, AI content generation, blockchain API integration |
-| **Apache Maven**           | v3.9.9      | Dependency management & project build system for Java |
-| **Lombok**                 | v1.18.36    | Java annotation library to reduce boilerplate code    |
-| **Vite, React, TypeScript** | -           | UI for bot management & monitoring logs in blockchain |
-| **Node.js**                | v23.4.0     | JavaScript runtime for Vite & frontend tooling |
-| **npm, npx**               | v10.9.2     | Package management & script execution for frontend |
-| **Git & GitHub**           | -           | Version control & code hosting |
-| **Postman**                | 11.33.5     | API testing |
-| **IntelliJ IDEA**          | 2024.3.3    | Development environment |
+| **Technology**               | **Version**                      | **Usage** |
+|------------------------------|----------------------------------|------------------------------------------------|
+| **Java 21-23 (Spring Boot)** | v3.4.2                           | Backend for fetching data from X, AI content generation, blockchain API integration |
+| **Apache Maven**             | v3.9.9                           | Dependency management & project build system for Java |
+| **Lombok**                   | v1.18.36                         | Java annotation library to reduce boilerplate code    |
+| **Vite, React, TypeScript**  | -                                | UI for bot management & monitoring logs in blockchain |
+| **Node.js**                  | v23.4.0                          | JavaScript runtime for Vite & frontend tooling |
+| **npm, npx**                 | v10.9.2                          | Package management & script execution for frontend |
+| **Git & GitHub**             | -                                | Version control & code hosting |
+| **Postman**                  | 11.33.5                          | API testing |
+
+Editors: IntelliJ IDEA Ultimate (2025.1.3), VSCode.
 
 ### **2️⃣ Blockchain & Smart Contracts**
 | **Component** | **Version** | **Usage** |
@@ -339,6 +359,14 @@ Enter your  country  to  search  for  trends (United States,  Canada)
 
    - JDBC URL — jdbc:h2:file:./data/xbot-ai-db
 
+### X API v2 Endpoints
+
+| Endpoint           | Free Limit |
+| -------------------|------------------|
+| GET /2/users/by/username/:username   | 3 requests / 15 mins |
+| GET /2/tweets/search/recent          | 1 requests / 15 mins |
+| GET /2/tweets                        | 1 requests / 15 mins |
+| GET /2/users/:id/mentions            | 1 requests / 15 mins |
 
 ## 🧠 Gemini AI Integration
 

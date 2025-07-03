@@ -7,6 +7,8 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
+
+import org.example.xbotai.config.ApiUrls;
 import org.example.xbotai.config.SocialMediaBotProperties;
 import org.example.xbotai.config.SocialMediaProperties;
 import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
@@ -22,8 +24,6 @@ public class SocialMediaServiceImpl implements SocialMediaService {
     private final SystemSocialMediaBotPropertiesProvider botPropertiesProvider;
 
     private final BlockchainService blockchainService;
-
-    private static final String TWEET_ENDPOINT = "https://api.twitter.com/2/tweets";
 
     public SocialMediaServiceImpl(SystemSocialMediaUserPropertiesProvider propertiesProvider,
                                   SystemSocialMediaBotPropertiesProvider botPropertiesProvider,
@@ -63,7 +63,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
                 props.getAccessToken(),
                 props.getAccessTokenSecret());
 
-        OAuthRequest request = new OAuthRequest(Verb.POST, TWEET_ENDPOINT);
+        OAuthRequest request = new OAuthRequest(Verb.POST, ApiUrls.X_TWEETS);
         request.addHeader("Content-Type", "application/json");
         String payload = "{\"text\":\"" + tweetContent + "\"}";
         request.setPayload(payload);
@@ -98,7 +98,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
                 botProperties.getAccessTokenSecret());
 
         String payload = "{\"text\":\"" + tweetContent + "\", \"reply\":{\"in_reply_to_tweet_id\":\"" + inReplyToTweetId + "\"}}";
-        OAuthRequest request = new OAuthRequest(Verb.POST, TWEET_ENDPOINT);
+        OAuthRequest request = new OAuthRequest(Verb.POST, ApiUrls.X_TWEETS);
         request.addHeader("Content-Type", "application/json");
         request.setPayload(payload);
 

@@ -13,6 +13,7 @@ import com.github.scribejava.core.oauth.OAuth10aService;
 import org.example.xbotai.config.ApiUrls;
 import org.example.xbotai.config.SocialMediaBotProperties;
 import org.example.xbotai.config.SocialMediaUserProperties;
+import org.example.xbotai.dto.TrendSelectionRequest;
 import org.example.xbotai.model.ProcessedTweet;
 import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
@@ -22,10 +23,13 @@ import org.example.xbotai.util.SocialMediaCommandParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -200,24 +204,12 @@ public class SocialMediaBotMentionService {
         try {
             if (text.toLowerCase().contains("trends") && text.contains(botMention)) {
                 logger.info("Detected 'trends' command in tweet: {}", text);
-                trendsCommandResponder.askCountryForTrends(tweetId, text);
-                handled = true;
-            } else if (text.toLowerCase().contains("country") && text.contains(botMention)){
-                logger.info("Detected 'country' command in tweet: {}", text);
-                String userCountry = SocialMediaCommandParser.parseAllWordsAfterAsOne(text, "country");
-                logger.info("userCountry: {}", userCountry);
-                if (userCountry != null) {
-                    logger.info("User specified country: {}", userCountry);
-                } else {
-                    logger.info("No word found after 'country', using default 'united_states'");
-                    userCountry = "united_states";
-                }
 
                 try {
-                    handleCountryTrendRequest(tweetId, userCountry);
+                    handleCountryTrendRequest(tweetId, "USA");
                     handled = true;
                 } catch (Exception e) {
-                    logger.error("Error calling trends API", e);
+                    logger.error("Error calling trends command", e);
                 }
             } else if (text.toLowerCase().contains(TREND_COMMAND) && text.contains(botMention)) {
                 logger.info("✅ Detected 'trend' command in tweet: {}", text);
@@ -248,6 +240,7 @@ public class SocialMediaBotMentionService {
         }
     }
 
+    /** Handles the country command. */
     private void handleCountryTrendRequest(String tweetId, String userCountry) {
         RestTemplate restTemplate = new RestTemplate();
         String url = ApiUrls.BACKEND_URL + "/api/bot/trends?country=" + userCountry;
@@ -265,14 +258,16 @@ public class SocialMediaBotMentionService {
 
     /** Processing the trend selection command. */
     private void handleTrendSelectionAndGeneration(String tweetId, String userId, String selectedTrend) {
-        RestTemplate restTemplate = new RestTemplate();
+        TrendSelectionRequest requestBody = new TrendSelectionRequest(userId, selectedTrend);
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<TrendSelectionRequest> entity = new HttpEntity<>(requestBody, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
         String url = ApiUrls.BACKEND_URL + "/api/bot/select-trend";
-        Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("userId", userId);
-        requestBody.put(TREND_COMMAND, selectedTrend);
-        String response = restTemplate.postForObject(url, requestBody, String.class);
-        logger.info("Select trend response: {}", response);
+        String response = restTemplate.postForObject(url, entity, String.class);
 
         String generatedTweetResponse = fetchGeneratedTweet(userId);
         logger.info("Generated tweet: {}", generatedTweetResponse);
@@ -283,9 +278,6 @@ public class SocialMediaBotMentionService {
     /** Calls the backend to generate a tweet. */
     private String fetchGeneratedTweet(String userId) {
         RestTemplate restTemplate = new RestTemplate();
-
-        // TODO: add JWT
-
         String generateTweetUrl = ApiUrls.BACKEND_URL + "/api/bot/generate-tweet?userId=" + userId;
         return restTemplate.getForObject(generateTweetUrl, String.class);
     }
@@ -303,8 +295,8 @@ public class SocialMediaBotMentionService {
             String responsePostTweet = restTemplate.postForObject(urlPostTweet, requestBodyPostTweet, String.class);
             logger.info("Post response: {}", responsePostTweet);
 
-            String botAnswer = "The post was posted on your behalf. Contact me again!";
-            trendsCommandResponder.displayGeneratedTweet(tweetId, botAnswer);
+//            String botAnswer = "The post was posted on your behalf. Contact me again!";
+//            trendsCommandResponder.displayGeneratedTweet(tweetId, botAnswer);
             return true;
         } catch (Exception e) {
             logger.error("Error calling confirm post API", e);

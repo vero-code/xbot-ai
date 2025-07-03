@@ -19,7 +19,7 @@ public class TrendsCommandResponder {
     }
 
     /**
-     * Replies to a tweet that contains the "trends" command.
+     * Deprecated. Replies to a tweet that contains the "trends" command.
      * Posts on behalf of the bot.
      */
     public void askCountryForTrends(String tweetId, String text) {
@@ -50,6 +50,7 @@ public class TrendsCommandResponder {
         }
     }
 
+    /** Deprecated. Used when bot reply after publishing tweet from username. */
     public void displayGeneratedTweet(String tweetId, String generatedTweetResponse) {
         try {
             int maxLength = 280;
