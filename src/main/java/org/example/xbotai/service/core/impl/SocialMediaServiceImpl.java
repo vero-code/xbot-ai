@@ -15,6 +15,10 @@ import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
 import org.example.xbotai.service.core.SocialMediaService;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class SocialMediaServiceImpl implements SocialMediaService {
@@ -65,11 +69,16 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
         OAuthRequest request = new OAuthRequest(Verb.POST, ApiUrls.X_TWEETS);
         request.addHeader("Content-Type", "application/json");
-        String payload = "{\"text\":\"" + tweetContent + "\"}";
-        request.setPayload(payload);
-        service.signRequest(oauth1AccessToken, request);
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, String> jsonMap = new HashMap<>();
+            jsonMap.put("text", tweetContent);
+            String payload = objectMapper.writeValueAsString(jsonMap);
+
+            request.setPayload(payload);
+            service.signRequest(oauth1AccessToken, request);
+
             Response response = service.execute(request);
             if (response.getCode() == 201) {
                 if (logToBlockchain) {

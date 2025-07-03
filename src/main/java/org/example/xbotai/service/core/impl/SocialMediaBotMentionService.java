@@ -98,10 +98,10 @@ public class SocialMediaBotMentionService {
     }
 
     /**
-     * Polls for tweets in the bot's account that mention the bot every 15 minutes.
+     * Polls for tweets in the bot's account that mention the bot every minute.
      * Then filters them to keep only tweets sent from the selected user's account.
      */
-    //@Scheduled(fixedDelay = 900000)
+    @Scheduled(fixedDelay = 60000)
     public void pollMentions() {
         initOAuthServiceIfNeeded();
         try {
@@ -283,7 +283,7 @@ public class SocialMediaBotMentionService {
     }
 
     /**
-     * Handles posting the generated tweet and responding to the user.
+     * Handles posting the generated tweet.
      */
     private boolean handlePostTweet(String tweetId, String userId, String generatedTweetResponse) {
         try {
@@ -295,8 +295,6 @@ public class SocialMediaBotMentionService {
             String responsePostTweet = restTemplate.postForObject(urlPostTweet, requestBodyPostTweet, String.class);
             logger.info("Post response: {}", responsePostTweet);
 
-//            String botAnswer = "The post was posted on your behalf. Contact me again!";
-//            trendsCommandResponder.displayGeneratedTweet(tweetId, botAnswer);
             return true;
         } catch (Exception e) {
             logger.error("Error calling confirm post API", e);
