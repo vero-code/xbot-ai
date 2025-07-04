@@ -1,3 +1,3 @@
 package org.example.xbotai.dto;
 
-public record TweetGenerationRequest(String userId, String tweet) { }
+public record TweetGenerationRequest(String userId, String tweet, String trend) { }

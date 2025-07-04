@@ -11,6 +11,7 @@ import com.github.scribejava.core.oauth.OAuth10aService;
 import org.example.xbotai.config.ApiUrls;
 import org.example.xbotai.config.SocialMediaBotProperties;
 import org.example.xbotai.config.SocialMediaProperties;
+import org.example.xbotai.dto.TweetLogDto;
 import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
 import org.example.xbotai.service.core.SocialMediaService;
@@ -19,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class SocialMediaServiceImpl implements SocialMediaService {
@@ -29,6 +32,8 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
     private final BlockchainService blockchainService;
 
+    private static final Logger logger = LoggerFactory.getLogger(SocialMediaServiceImpl.class);
+
     public SocialMediaServiceImpl(SystemSocialMediaUserPropertiesProvider propertiesProvider,
                                   SystemSocialMediaBotPropertiesProvider botPropertiesProvider,
                                   BlockchainService blockchainService) {
@@ -37,28 +42,22 @@ public class SocialMediaServiceImpl implements SocialMediaService {
         this.blockchainService = blockchainService;
     }
 
-    /**
-     * Post a tweet as a bot.
-     */
+    /** Post a tweet as a bot. */
     @Override
-    public String postBotTweet(String tweetContent, boolean logToBlockchain) {
+    public String postBotTweet(String tweetContent, String userId, String selectedTrend, boolean logToBlockchain) {
         SocialMediaProperties botProperties = botPropertiesProvider.getProperties();
-        return doPostTweet(botProperties, tweetContent, logToBlockchain);
+        return doPostTweet(botProperties, tweetContent, userId, selectedTrend, logToBlockchain);
     }
 
-    /**
-     * Post a tweet as a user.
-     */
+    /** Post a tweet as a user. */
     @Override
-    public String postUserTweet(String tweetContent, boolean logToBlockchain) {
+    public String postUserTweet(String tweetContent, String userId, String selectedTrend, boolean logToBlockchain) {
         SocialMediaProperties userProperties = propertiesProvider.getProperties();
-        return doPostTweet(userProperties, tweetContent, logToBlockchain);
+        return doPostTweet(userProperties, tweetContent, userId, selectedTrend, logToBlockchain);
     }
 
-    /**
-     * General logic for publishing a tweet for any account.
-     */
-    private String doPostTweet(SocialMediaProperties props, String tweetContent, boolean logToBlockchain) {
+    /** General logic for publishing a tweet for any account. */
+    private String doPostTweet(SocialMediaProperties props, String tweetContent, String userId, String selectedTrend, boolean logToBlockchain) {
         OAuth10aService service = new ServiceBuilder(props.getApiKey())
                 .apiSecret(props.getApiSecretKey())
                 .build(TwitterApi.instance());
@@ -81,8 +80,16 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
             Response response = service.execute(request);
             if (response.getCode() == 201) {
+                String body = response.getBody();
+                String tweetId = objectMapper.readTree(body).at("/data/id").asText();
+
                 if (logToBlockchain) {
-                    String blockchainResult = blockchainService.logTweetToBlockchain(tweetContent);
+                    TweetLogDto log = createTweetLog(tweetId, userId, props.getUsername(), selectedTrend);
+
+                    ObjectMapper debugMapper = new ObjectMapper();
+                    logger.info("Final payload for blockchain: {}", debugMapper.writeValueAsString(log));
+
+                    String blockchainResult = blockchainService.logTweetToBlockchain(log);
                     return "Tweet successfully posted! Blockchain log: " + blockchainResult;
                 } else {
                     return "Tweet successfully posted!";
@@ -106,18 +113,33 @@ public class SocialMediaServiceImpl implements SocialMediaService {
                 botProperties.getAccessToken(),
                 botProperties.getAccessTokenSecret());
 
-        String payload = "{\"text\":\"" + tweetContent + "\", \"reply\":{\"in_reply_to_tweet_id\":\"" + inReplyToTweetId + "\"}}";
-        OAuthRequest request = new OAuthRequest(Verb.POST, ApiUrls.X_TWEETS);
-        request.addHeader("Content-Type", "application/json");
-        request.setPayload(payload);
-
-        service.signRequest(oauth1AccessToken, request);
-
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            Map<String, Object> replyMap = new HashMap<>();
+            replyMap.put("in_reply_to_tweet_id", inReplyToTweetId);
+
+            Map<String, Object> jsonMap = new HashMap<>();
+            jsonMap.put("text", tweetContent);
+            jsonMap.put("reply", replyMap);
+
+            String payload = objectMapper.writeValueAsString(jsonMap);
+
+            OAuthRequest request = new OAuthRequest(Verb.POST, ApiUrls.X_TWEETS);
+            request.addHeader("Content-Type", "application/json");
+            request.setPayload(payload);
+
+            service.signRequest(oauth1AccessToken, request);
+
             Response response = service.execute(request);
             if (response.getCode() == 201) {
                 if (logToBlockchain) {
-                    String blockchainResult = blockchainService.logTweetToBlockchain(tweetContent);
+                    String body = response.getBody();
+                    String tweetId = objectMapper.readTree(body).at("/data/id").asText();
+                    String tweetUrl = "https://x.com/" + botProperties.getUsername() + "/status/" + tweetId;
+
+                    TweetLogDto log = new TweetLogDto(tweetId, "bot", tweetUrl, "(reply)");
+                    String blockchainResult = blockchainService.logTweetToBlockchain(log);
                     return "Tweet reply successfully posted! Blockchain log: " + blockchainResult;
                 } else {
                     return "Tweet reply successfully posted!";
@@ -128,5 +150,10 @@ public class SocialMediaServiceImpl implements SocialMediaService {
         } catch (Exception e) {
             return "Error occurred while posting tweet reply: " + e.getMessage();
         }
+    }
+
+    private TweetLogDto createTweetLog(String tweetId, String userId, String username, String trend) {
+        String tweetUrl = "https://x.com/" + username.replace("@", "") + "/status/" + tweetId;
+        return new TweetLogDto(tweetId, tweetUrl, userId, trend);
     }
 }

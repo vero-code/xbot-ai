@@ -272,7 +272,7 @@ public class SocialMediaBotMentionService {
         String generatedTweetResponse = fetchGeneratedTweet(userId);
         logger.info("Generated tweet: {}", generatedTweetResponse);
 
-        handlePostTweet(tweetId, userId, generatedTweetResponse);
+        handlePostTweet(tweetId, userId, generatedTweetResponse, selectedTrend);
     }
 
     /** Calls the backend to generate a tweet. */
@@ -282,16 +282,15 @@ public class SocialMediaBotMentionService {
         return restTemplate.getForObject(generateTweetUrl, String.class);
     }
 
-    /**
-     * Handles posting the generated tweet.
-     */
-    private boolean handlePostTweet(String tweetId, String userId, String generatedTweetResponse) {
+    /** Handles posting the generated tweet. */
+    private boolean handlePostTweet(String tweetId, String userId, String generatedTweetResponse, String trend) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             String urlPostTweet = ApiUrls.BACKEND_URL + "/api/bot/post-tweet";
             Map<String, String> requestBodyPostTweet = new HashMap<>();
             requestBodyPostTweet.put("userId", userId);
             requestBodyPostTweet.put("tweet", generatedTweetResponse);
+            requestBodyPostTweet.put("trend", trend);
             String responsePostTweet = restTemplate.postForObject(urlPostTweet, requestBodyPostTweet, String.class);
             logger.info("Post response: {}", responsePostTweet);
 

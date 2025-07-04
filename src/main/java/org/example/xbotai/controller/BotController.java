@@ -61,34 +61,17 @@ public class BotController {
         return generatedTweet;
     }
 
-    @PostMapping("/confirm-tweet")
-    public String confirmTweet(@RequestParam String userId, @RequestParam boolean confirm) {
-        String tweetToPost = userGeneratedTweets.get(userId);
-
-        if (tweetToPost == null) {
-            return "No tweet generated to confirm. Please generate a tweet first.";
-        }
-
-        if (confirm) {
-            String response = socialMediaService.postUserTweet(tweetToPost, true);
-            userGeneratedTweets.remove(userId);
-            return response;
-        } else {
-            userGeneratedTweets.remove(userId);
-            return "Tweet posting canceled.";
-        }
-    }
-
     @PostMapping("/post-tweet")
     public String postTweet(@RequestBody TweetGenerationRequest request) {
         String userId = request.userId();
         String tweetToPost = request.tweet();
+        String trend = request.trend();
 
         if (tweetToPost == null) {
             return "No tweet generated to confirm. Please generate a tweet first.";
         }
 
-        String response = socialMediaService.postUserTweet(tweetToPost, true);
+        String response = socialMediaService.postUserTweet(tweetToPost, userId, trend, true);
         userGeneratedTweets.remove(userId);
         return response;
     }
