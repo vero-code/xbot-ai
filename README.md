@@ -206,36 +206,25 @@ Fill in the fields with your credentials. How to find them?
 
 ### 4️⃣Connect NEAR for blockchain logging
 
-1. **Install NEAR CLI:**
+Need to set up Ubuntu (or WSL), then:
+
+1. Create a project using `npx create-near-app@latest`.
+2. Replace the default `src/contract.ts` with your custom contract file, located at `blockchain/ubuntu/src/contract.ts`.
+3. Recompile contract to `.wasm` using `npm run build` (or use the pre-built file located at `blockchain/ubuntu/build/hello_near.wasm`).
+4. Deploy contract to your testnet account using `near deploy your_account_id.testnet ./build/hello_near.wasm`.
+5. Return to Windows environment. In `blockchain/near-logger.js`, change the contract name:
+
+`const CONTRACT_NAME = 'your_account_id.testnet';`
+
+6. Important for Windows users: ensure your account credentials are correctly set up in C:\Users\YOUR_USERNAME\.near-credentials
+
+> See more in the official [documentation](https://docs.near.org/smart-contracts/quickstart) about Smart Contracts.
+
+For testing, use the example payload file `blockchain/payload.json` with the command:
 
 ```bash
-   npm install -g near-cli
-   near --version
-   ```
-
-2. **Create a MyNearWallet account on the Testnet:**
-
-```bash
-   near login --networkId testnet
-   ```
-
-This will store your credentials locally:
-
-```C:\Users\<YOUR_USERNAME>\.near-credentials\testnet```
-
-3. **Deploy the smart contract:**
-
-The contract is already compiled into .wasm format and located at:
-
-```blockchain/ubuntu/near-logger-contract.wasm```
-
-To deploy it to your Testnet account, run:
-
-```bash
-    cd blockchain
-    near deploy [your-name].testnet ubuntu/near-logger-contract.wasm
-    npm install near-api-js
-   ```
+node blockchain/near-logger.js --file=blockchain/payload.json
+```
 
 ---
 
@@ -254,7 +243,7 @@ To deploy it to your Testnet account, run:
 4. Uncomment line in the `src/main/java/.../service/core/impl/SocialMediaBotMentionService.java` file:
 
 ```bash
-@Scheduled(fixedDelay =  900000)
+@Scheduled(fixedDelay =  60000)
 ```
 
 This line enables bot mention tracking.
@@ -265,51 +254,32 @@ This line enables bot mention tracking.
 
 ```bash
 mvn spring-boot:run
+```
+```bash
+cd frontend
 npm run dev
 ```
 
-6. Check if the bot responds:
+#### 🟢 Step 2: Select a trend for AI post generation
 
-```bash
-Enter your  country  to  search  for  trends (United States,  Canada)
-```
-
-#### 🟢 Step 2: Provide a country for trend search
-
-1. Reply:
-
-```bash
-    country United States
-   ```
-
-2. **Restart the Java server** (to activate an additional endpoint to search for bot mentions):
-```bash
-    mvn spring-boot:run
-   ```
-
-3. The bot will fetch trends and respond:
+1. The bot will fetch trends and respond:
 
 ```bash
     Trend1, Trend2, Trend3
    ```
 
-#### 🟢 Step 3: Select a trend for AI post generation
-
-1. Reply with a trend:
+2. Reply with a trend:
 
 ```bash
     trend [selected-trend]
    ```
 
-2. The bot will generate a post and publish it **after 15 minutes.**
+3. The bot will generate a post and publish it from your username.
 
-#### 🟢 Step 4: Bot confirms post publication
+#### 🟢 Step 3: Confirm post publication
 
-✅ If everything works correctly, you will see:
+If everything works correctly, you will see:
 
-```bash
-    The post was posted on your behalf. Contact me again!
-   ```
 🔹 **Check your X account** to verify the post is published.
 
 🔹 **If the tweet doesn't appear**, make sure the services are running correctly and check the logs in Spring Boot.
@@ -372,7 +342,7 @@ Enter your  country  to  search  for  trends (United States,  Canada)
 
 🔹 **How It Works:**
 
-1️⃣ Retrieves **trending topics** by country from **Gemini**.
+1️⃣ Retrieves **trending topics** from **Gemini**.
 
 2️⃣ Processes the trend and sends it to **Gemini**.
 

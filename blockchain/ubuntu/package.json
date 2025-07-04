@@ -1,11 +1,11 @@
 {
-  "name": "xbot-ai",
+  "name": "hello_near",
   "version": "1.0.0",
   "license": "(MIT AND Apache-2.0)",
   "type": "module",
   "scripts": {
-    "build": "near-sdk-js build src/near-logger-contract.ts build/near-logger-contract.wasm",
-    "test": "$npm_execpath run build && ava -- ./build/near-logger-contract.wasm"
+    "build": "near-sdk-js build src/contract.ts build/hello_near.wasm",
+    "test": "$npm_execpath run build && ava -- ./build/hello_near.wasm"
   },
   "dependencies": {
     "near-sdk-js": "2.0.0"
