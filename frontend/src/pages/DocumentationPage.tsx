@@ -102,49 +102,28 @@ const DocumentationPage: React.FC = () => {
                     <div className="doc-column">
                         <section className="doc-section">
                             <h2>Testing Bot Interaction</h2>
+                            <p>Make sure that done all steps in
+                                <a href="https://github.com/vero-code/xbot-ai/?tab=readme-ov-file#-installation" target="_blank">
+                                    &#32;Installation section.
+                                </a>
+                            </p>
                             <p>1️⃣ Trigger the bot with a mention:</p>
                             <pre className="code-block">
                                 {`@your_bot trends`}
                             </pre>
-                            <p>The bot will prompt for a country.</p>
-
-                            <p>2️⃣ Provide a country:</p>
-                            <pre className="code-block">
-                                {`country [your-country]`}
-                            </pre>
-
-                            <p>The bot fetches trending topics and replies.</p>
-                            <p>3️⃣ Generate an AI-powered tweet:</p>
-                            <p>Choose trend and reply:</p>
+                            <p>
+                                2️⃣ Uncomment @Scheduled(fixedDelay = 30000) in SocialMediaBotMentionService.java.
+                                Run the backend & frontend servers.
+                            </p>
+                            <p>
+                                3️⃣ The bot displays trending topics.
+                                Choose trend and reply:
+                            </p>
                             <pre className="code-block">
                                 {`trend [selected-trend]`}
                             </pre>
-                            <p>If the bot does not respond immediately, ensure that the scheduled task is enabled and API limits are not exceeded.</p>
-                        </section>
-
-                        <section className="doc-section">
-                            <h2>Blockchain Logging</h2>
-                            <p>To log interactions to the NEAR blockchain:</p>
-
-                            <p>Install NEAR CLI</p>
-                            <pre className="code-block">
-                                npm install -g near-cli
-                            </pre>
-                            <p>Login to NEAR Testnet</p>
-                            <pre className="code-block">
-                                near login --networkId testnet
-                            </pre>
-
-                            <p>Deploy contract</p>
-                            <pre className="code-block">
-                                cd blockchain
-                            </pre>
-                            <pre className="code-block">
-                                near deploy [your-name].testnet ubuntu/near-logger-contract.wasm
-                            </pre>
-                            <pre className="code-block">
-                                npm install near-api-js
-                            </pre>
+                            <p>Check your X (Twitter) profile in a few seconds.</p>
+                            <p>If the bot does not post tweet from your username, ensure that the scheduled task is enabled and API limits are not exceeded.</p>
                         </section>
                     </div>
                 </div>
