@@ -1,7 +1,11 @@
-# 🤖 XBot AI
+# 🤖 XBot AI 🏆🚀
 
 **XBot AI** is an intelligent agent for **X (formerly Twitter)** that integrates **Gemini AI** for trend detection and content generation, combined with **blockchain logging on NEAR Testnet**. Users interact with the bot via **mentions and replies**, enabling real-time trend analysis, AI-generated content, and transparent on-chain activity logging.
 
+## ✨ **Recognitions & Awards** ✨
+
+* **Wildcard Track Winner** (AI & Autonomous Infrastructure) at **PL_Genesis: Modular Worlds Hackathon**
+* **Founders Forge Top 15 Pick** (selected among the top ~4% of projects, includes a $10K non-dilutive grant & mentorship)
 
 ## 🎯 Originally Submitted to
 
