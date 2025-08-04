@@ -3,6 +3,7 @@ package org.example.xbotai.controller;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.example.xbotai.dto.SocialAccountDto;
 import org.example.xbotai.service.ui.SocialAccountService;
@@ -26,14 +27,16 @@ public class SocialAccountController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<SocialAccountDto> getSocialAccount(@PathVariable Long userId) {
-        SocialAccountDto dto = socialAccountService.getSocialAccountByUserId(userId);
-        return ResponseEntity.ok(dto);
+        Optional<SocialAccountDto> dtoOptional = socialAccountService.getSocialAccountByUserId(userId);
+        return dtoOptional
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @GetMapping("/get-user-id")
     public ResponseEntity<Map<String, String>> getUserIdByUsername(
-        @RequestParam String username,
-        @RequestHeader("X-Token") String authHeader) {
+            @RequestParam String username,
+            @RequestHeader("X-Token") String authHeader) {
         String bearerToken = authHeader.replace("Bearer ", "");
         String userId = socialAccountService.fetchUserIdByUsername(username, bearerToken);
         System.out.println("✅ Retrieved userId from X API: " + userId);

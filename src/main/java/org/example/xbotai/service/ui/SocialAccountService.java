@@ -2,11 +2,13 @@ package org.example.xbotai.service.ui;
 
 import org.example.xbotai.dto.SocialAccountDto;
 
+import java.util.Optional;
+
 public interface SocialAccountService {
 
     SocialAccountDto saveSocialAccount(SocialAccountDto dto);
 
-    SocialAccountDto getSocialAccountByUserId(Long userId);
+    Optional<SocialAccountDto> getSocialAccountByUserId(Long userId);
 
     SocialAccountDto getDefaultSocialAccount();
 

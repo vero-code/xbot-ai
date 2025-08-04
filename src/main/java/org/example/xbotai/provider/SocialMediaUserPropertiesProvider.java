@@ -30,7 +30,8 @@ public class SocialMediaUserPropertiesProvider {
         String username = authentication.getName();
         Long userId = userService.getUserIdByUsername(username);
 
-        SocialAccountDto dto = socialAccountService.getSocialAccountByUserId(userId);
+        SocialAccountDto dto = socialAccountService.getSocialAccountByUserId(userId)
+                .orElseThrow(() -> new IllegalStateException("Required social account not found for user ID: " + userId));
         SocialMediaUserProperties props = new SocialMediaUserProperties();
         props.setApiKey(dto.getApiKey());
         props.setApiSecretKey(dto.getApiSecretKey());

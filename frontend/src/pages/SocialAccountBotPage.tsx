@@ -161,7 +161,7 @@ const SocialAccountBotPage: React.FC = () => {
                             placeholder=" "
                             disabled
                         />
-                        <label htmlFor="userId">User ID saves on button press</label>
+                        <label htmlFor="userId">User ID creates on button press</label>
                     </div>
                     <div className="form-group">
                         <input

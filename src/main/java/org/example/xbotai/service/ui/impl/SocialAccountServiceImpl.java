@@ -71,10 +71,9 @@ public class SocialAccountServiceImpl implements SocialAccountService {
     }
 
     @Override
-    public SocialAccountDto getSocialAccountByUserId(Long userId) {
-        SocialAccount account = repository.findByUser_Id(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Social account not found for userId: " + userId));
-        return mapper.toDto(account);
+    public Optional<SocialAccountDto> getSocialAccountByUserId(Long userId) {
+        return repository.findByUser_Id(userId)
+                .map(mapper::toDto);
     }
 
     @Override

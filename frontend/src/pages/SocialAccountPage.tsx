@@ -44,8 +44,12 @@ const SocialAccountPage: React.FC = () => {
             setJwtToken(data.jwtToken || "");
             setAccessToken(data.accessToken || "");
             setAccessTokenSecret(data.accessTokenSecret || "");
-        } catch (err) {
-            console.error("Error loading social account:", err);
+        } catch (err: any) {
+            if (err.response && (err.response.status === 403 || err.response.status === 404 || err.response.status === 204)) {
+                console.log("No social account found for this user. Displaying a clean form.");
+            } else {
+                console.error("Error loading social account:", err);
+            }
         }
     };
 
@@ -161,7 +165,7 @@ const SocialAccountPage: React.FC = () => {
                             placeholder=" "
                             disabled
                         />
-                        <label htmlFor="userId">User ID saves on button press</label>
+                        <label htmlFor="userId">User ID creates on button press</label>
                     </div>
                     <div className="form-group">
                         <input

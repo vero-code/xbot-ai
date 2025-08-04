@@ -176,7 +176,7 @@ openssl rand -base64 64
 Fill in the fields with your credentials. How to find them?
 
 1. **Log in or sign up** on [X Developer Platform](https://developer.x.com/en).
-2. Go to [Developer Dashboard](https://developer.twitter.com/en/portal/dashboard).
+2. Go to [Developer Portal](https://developer.twitter.com/en/portal/dashboard).
 3. In the left sidebar, click **Projects & Apps**, and select your project (default one).
 4. In the **User authentication settings** block, click **Edit and configure**:
 * **App permissions:** ```Read and write```
@@ -185,7 +185,7 @@ Fill in the fields with your credentials. How to find them?
 * **Callback URI / Redirect URL:** ```http://localhost:8080/auth/callback```
 * **Website URL:** *(Any valid URL, e.g., GitHub repo)*
 5. Click **Save**.
-6. Generate keys in Keys and Tokens tab:
+6. Generate keys in **Keys and Tokens tab**:
 
 | Field              | Value                                            |
 | -------------------|--------------------------------------------------|
