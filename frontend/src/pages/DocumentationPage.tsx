@@ -31,31 +31,33 @@ const DocumentationPage: React.FC = () => {
 
                         <section className="doc-section">
                             <h2>Setup Guide</h2>
-                            <p>Follow these steps to set up the project:</p>
+                            <p>Follow these steps to set up the project for local development:</p>
                             <p>1️⃣ Clone the repository</p>
                             <pre className="code-block">
-                                git clone https://github.com/vero-git-hub/xbot-ai.git
-                            </pre>
-                            <pre className="code-block">
-                                cd xbot-ai
+                                {`git clone https://github.com/vero-code/xbot-ai.git\ncd xbot-ai`}
                             </pre>
 
-                            <p>2️⃣ Start the backend (Spring Boot)</p>
+                            <p>2️⃣ Configure the Backend</p>
+                            <p>
+                                Copy the example configuration file `src/main/resources/application-local-example.properties` to a new file named `application-local.properties`.
+                                And filled the fields.
+                            </p>
+
+                            <p>3️⃣ Start the Backend (Spring Boot)</p>
                             <pre className="code-block">
                                 mvn spring-boot:run
                             </pre>
-                            Wait until the Spring Boot service fully starts before running the frontend.
+                            <p>Wait until the Spring Boot service fully starts.</p>
 
-                            <p>3️⃣ Start the frontend (React UI)</p>
+                            <p>4️⃣ Start the Frontend (React UI)</p>
                             <pre className="code-block">
-                                cd frontend
+                                {`cd frontend\nnpm install\nnpm run dev`}
                             </pre>
-                            <pre className="code-block">
-                                npm install
-                            </pre>
-                            <pre className="code-block">
-                                npm run dev
-                            </pre>
+
+                            <p>5️⃣ Connect Your Personal X Account</p>
+                            <p>
+                                Return to home page, and click to the **CONNECT YOUR ACCOUNT X** button to connect your personal X account.
+                            </p>
                         </section>
                     </div>
 
@@ -84,46 +86,29 @@ const DocumentationPage: React.FC = () => {
                         </section>
 
                         <section className="doc-section">
-                            <h2>FAQ</h2>
-                            <p>Here are some common questions and solutions:</p>
-                            <ul>
-                                <li><strong>Q: How do I troubleshoot issues with setup?</strong></li>
-                                <p>A: Check <a href={"https://github.com/vero-git-hub/xbot-ai/blob/master/README.md"}>README.md</a> for troubleshooting steps and ensure API credentials are correctly set.</p>
-
-                                <li><strong>Q: Can I use a different AI model?</strong></li>
-                                <p>A: Currently, Gemini AI is used, but additional AI integrations are planned.</p>
-
-                                <li><strong>Q: How do I check blockchain logs?</strong></li>
-                                <p>A: Visit the Blockchain Console page in the UI to view logged transactions.</p>
-                            </ul>
-                        </section>
-                    </div>
-
-                    <div className="doc-column">
-                        <section className="doc-section">
                             <h2>Testing Bot Interaction</h2>
-                            <p>Make sure that done all steps in
-                                <a href="https://github.com/vero-code/xbot-ai/?tab=readme-ov-file#-installation" target="_blank">
-                                    &#32;Installation section.
-                                </a>
+                            <p>
+                                After setting up the project and connecting your **personal X account** in the UI, you can test the bot.
                             </p>
-                            <p>1️⃣ Trigger the bot with a mention:</p>
+                            <p>1️⃣ **Trigger the bot with a mention**</p>
+                            <p>In your personal X account, post a tweet mentioning your bot's username:</p>
                             <pre className="code-block">
-                                {`@your_bot trends`}
+                                {`@your_bot_username trends`}
                             </pre>
                             <p>
-                                2️⃣ Uncomment @Scheduled(fixedDelay = 30000) in SocialMediaBotMentionService.java.
-                                Run the backend & frontend servers.
+                                2️⃣ **Activate Mention Polling**
                             </p>
                             <p>
-                                3️⃣ The bot displays trending topics.
-                                Choose trend and reply:
+                                To make the bot check for mentions, you may need to uncomment the `@Scheduled` annotation in the `SocialMediaBotMentionService.java` file in the backend code.
                             </p>
+                            <p>
+                                3️⃣ **Reply to the Bot**
+                            </p>
+                            <p>The bot will reply with a list of trends. Reply to that tweet with your chosen trend:</p>
                             <pre className="code-block">
                                 {`trend [selected-trend]`}
                             </pre>
-                            <p>Check your X (Twitter) profile in a few seconds.</p>
-                            <p>If the bot does not post tweet from your username, ensure that the scheduled task is enabled and API limits are not exceeded.</p>
+                            <p>The bot should then post a new AI-generated tweet from your personal account.</p>
                         </section>
                     </div>
                 </div>

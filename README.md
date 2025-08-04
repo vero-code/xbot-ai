@@ -110,106 +110,111 @@ Two developer accounts used (bot & user) on X platform.
  cd xbot-ai
  ```
 
-### 2️⃣Configure Project:
+### 2️⃣ Configure Project:
 
-#### ✅ Setting Backend:
+First, create a file named **application-local.properties** in the `src/main/resources` directory (example in the `application-local-example.properties`).
 
-Create a file named **application-local.properties** in resources (example: ```src/main/resources/application-local-example.properties```). Fill in the file with your credentials:
+**✅ 1. Configure Bot's X Account**
 
-🔹 Obtain a Google Cloud API key:
+You will need a dedicated X account to act as your bot.
 
-1. Create an account on [Google Cloud](https://cloud.google.com/).
-2. Create a new project in **Google Cloud Console**
-3. Enable **Gemini API**
-4. Generate an **API Key**:
-   1. Go to **API & Services > Credentials**
-   2. Click **"Create Credentials" > "API key"**
+**First**, obtain all developer credentials for this account from the X Developer Portal. Here’s how:
 
-🔹Add the API key to ```src/main/resources/application-local.properties```:
-
-```bash
- google.cloud.api.key=your_google_cloud_api_key
- ```
-
-🔹 Generate jwt.secret:
-
-```bash  
-# Windows (PowerShell):
-[Convert]::ToBase64String((1..64 | ForEach-Object {Get-Random -Maximum 256}))
-
-# Linux/macOS:
-openssl rand -base64 64
-```
-
-🔹 Add the generated secret key to ```src/main/resources/application.properties```:
-```bash
- jwt.secret=your_jwt_secret
- ```
-
-🔹Run backend service:
-```bash
- mvn spring-boot:run
-```
-
-#### ✅ Setting Frontend:
-```bash
- cd frontend
- npm install
- npm run dev
-```
----
-
-### 3️⃣ Configure X accounts via UI
-1. Open the UI interface:
-
-   🔗 Go to http://localhost:5173/
-
-2. Register a user:
-* Click REGISTER → Enter your details → Click REGISTER
-* You will be redirected to the login page
-* Enter the credentials you just registered → Click LOGIN
-
-#### ✅ Connect your X account
-
-🔹 Click **"CONNECT YOUR ACCOUNT X"**
-
-Fill in the fields with your credentials. How to find them?
-
-1. **Log in or sign up** on [X Developer Platform](https://developer.x.com/en).
-2. Go to [Developer Portal](https://developer.twitter.com/en/portal/dashboard).
-3. In the left sidebar, click **Projects & Apps**, and select your project (default one).
-4. In the **User authentication settings** block, click **Edit and configure**:
+1. **Log in or sign up** on [Developer Portal](https://developer.twitter.com/en/portal/dashboard).
+2. In the left sidebar, click **Projects & Apps**, and select your project (default one).
+3. In the **User authentication settings**, click **Edit and configure**.
+4. Configure the settings as follows:
 * **App permissions:** ```Read and write```
 * **Type of App:** ```Web App, Automated App, or Bot```
-* **App info:**
 * **Callback URI / Redirect URL:** ```http://localhost:8080/auth/callback```
 * **Website URL:** *(Any valid URL, e.g., GitHub repo)*
 5. Click **Save**.
-6. Generate keys in **Keys and Tokens tab**:
+6. Navigate to the **Keys and Tokens** tab to generate and view all your keys.
 
-| Field              | Value                                            |
-| -------------------|--------------------------------------------------|
-| Username           | X account username (without @)                   |
-| User ID            | Autofill after clicking the save settings button |
-| API Key            | Consumer Keys: API Key                           |
-| API Secret         | Consumer Keys: API Secret                        |
-| JWT Token (Bearer) | Authentication Tokens: Bearer Token              |
-| Access Token       | Authentication Tokens: Access Token              |
-| Access Token Secret| Authentication Tokens: Access Token Secret       |
+**Next**, add these credentials to your `application-local.properties` file.
 
-7. Click the **save settings button** and back button.
+```bash
+xbot.credentials.bot.username=YOUR_BOT_USERNAME_WITHOUT_AT
+
+# Leave this empty for now; you will get it in the next step
+xbot.credentials.bot.user-id=
+
+xbot.credentials.bot.api-key=YOUR_BOT_API_KEY
+xbot.credentials.bot.api-secret=YOUR_BOT_API_SECRET
+
+# The Bearer Token below is needed once to get the User ID
+xbot.credentials.bot.jwt-token=YOUR_BOT_BEARER_TOKEN
+
+xbot.credentials.bot.access-token=YOUR_BOT_ACCESS_TOKEN
+xbot.credentials.bot.access-token-secret=YOUR_BOT_ACCESS_TOKEN_SECRET
+```
+
+**Finally, get your Bot's User ID.** The `userId` is not displayed on the X dashboard. Use Postman to make the following API request:
+
+-   **Method:** `GET`
+
+-   **URL:** `https://api.twitter.com/2/users/by/username/YOUR_BOT_USERNAME_HERE`
+
+-   **Headers:**
+
+    -   `Authorization`: `Bearer YOUR_BOT_BEARER_TOKEN_HERE`
+
+
+Copy the `id` from the JSON response and paste it into the `xbot.credentials.bot.user-id` field in your `application-local.properties` file.
+
+**✅ 2. Configure Google Cloud API**
+
+1. Create an account and a new project on [Google Cloud](https://cloud.google.com/).
+2. Enable the **Gemini API**.
+3. Generate an **API Key** in **API & Services > Credentials**.
+
+Add the API key to ```application-local.properties```:
+
+```bash
+google.cloud.api.key=your_google_cloud_api_key  
+ ```
+
+**✅ 3. Configure JWT Secret**
+
+Run one of the following commands in your terminal:
+```bash # Windows (PowerShell):  
+[Convert]::ToBase64String((1..64 | ForEach-Object {Get-Random -Maximum 256}))  
+  
+# Linux/macOS:  
+openssl rand -base64 64  
+```  
+
+Add the key to ```application-local.properties```:
+```bash
+ jwt.secret=your_jwt_secret  
+ ```
+
+### 3️⃣ Run the Application:
+
+1. Run backend service:
+```bash  
+mvn spring-boot:run  
+```
+2. Run frontend service (in a new terminal):
+```bash  
+ cd frontend
+ npm install
+ npm run dev  
+```  
+---  
+
+### 4️⃣ Configure Your Personal X Account via UI:
+1. Open the UI interface in your browser: [http://localhost:5173/](http://localhost:5173/).
+2. Register a new user for the service and log in.
+3. Click **"CONNECT YOUR ACCOUNT X"** on the main page.
+4. Fill in the fields with credentials from **your personal** X developer account. The process to obtain these is the same as described in **Configure Bot’s X Account** step above.
+5. After filling in the form, click the **save settings button**.
+
+📌 **Note:** When testing, use your **bot's username** (e.g., `@your_bot_username`) to mention the bot in your tweets.
 
 ---
 
-#### ✅ Connect bot X account
-
-🔹 Click **"CONNECT BOT ACCOUNT X"** and follow the same steps as for the personal account.
-
-📌 Note: Use your **bot's username** when mentioning the bot (e.g., ```@your_bot```) in your X account.
-
----
-
-### 4️⃣Connect NEAR for blockchain logging
+### 5️⃣ Connect NEAR for blockchain logging
 
 Need to set up Ubuntu (or WSL), then:
 
@@ -233,7 +238,7 @@ node blockchain/near-logger.js --file=blockchain/payload.json
 
 ---
 
-### 5️⃣Test the Bot Interaction in X
+### 6️⃣ Test the Bot Interaction in X
 
 #### 🟢 Step 1: Trigger the bot with a mention
 
@@ -290,7 +295,7 @@ If everything works correctly, you will see:
 
 ---
 
-### 6️⃣Test the Blockchain Interaction via UI
+### 7️⃣ Test the Blockchain Interaction via UI
 
 1. Log in to the UI: http://localhost:5173/ .
 2. Click **"GO TO NEAR CONSOLE"**
