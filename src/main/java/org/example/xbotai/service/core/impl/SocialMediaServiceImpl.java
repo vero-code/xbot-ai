@@ -9,10 +9,9 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 
 import org.example.xbotai.config.ApiUrls;
-import org.example.xbotai.config.SocialMediaBotProperties;
+import org.example.xbotai.config.BotCredentialsConfig;
 import org.example.xbotai.config.SocialMediaProperties;
 import org.example.xbotai.dto.TweetLogDto;
-import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
 import org.example.xbotai.service.core.SocialMediaService;
 import org.springframework.stereotype.Service;
@@ -28,25 +27,24 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
     private final SystemSocialMediaUserPropertiesProvider propertiesProvider;
 
-    private final SystemSocialMediaBotPropertiesProvider botPropertiesProvider;
+    private final BotCredentialsConfig botCredentials;
 
     private final BlockchainService blockchainService;
 
     private static final Logger logger = LoggerFactory.getLogger(SocialMediaServiceImpl.class);
 
     public SocialMediaServiceImpl(SystemSocialMediaUserPropertiesProvider propertiesProvider,
-                                  SystemSocialMediaBotPropertiesProvider botPropertiesProvider,
+                                  BotCredentialsConfig botCredentials,
                                   BlockchainService blockchainService) {
         this.propertiesProvider = propertiesProvider;
-        this.botPropertiesProvider = botPropertiesProvider;
+        this.botCredentials = botCredentials;
         this.blockchainService = blockchainService;
     }
 
     /** Post a tweet as a bot. */
     @Override
     public String postBotTweet(String tweetContent, String userId, String selectedTrend, boolean logToBlockchain) {
-        SocialMediaProperties botProperties = botPropertiesProvider.getProperties();
-        return doPostTweet(botProperties, tweetContent, userId, selectedTrend, logToBlockchain);
+        return doPostTweet(botCredentials, tweetContent, userId, selectedTrend, logToBlockchain);
     }
 
     /** Post a tweet as a user. */
@@ -59,7 +57,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
     /** General logic for publishing a tweet for any account. */
     private String doPostTweet(SocialMediaProperties props, String tweetContent, String userId, String selectedTrend, boolean logToBlockchain) {
         OAuth10aService service = new ServiceBuilder(props.getApiKey())
-                .apiSecret(props.getApiSecretKey())
+                .apiSecret(props.getApiSecret())
                 .build(TwitterApi.instance());
 
         OAuth1AccessToken oauth1AccessToken = new OAuth1AccessToken(
@@ -104,14 +102,13 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
     @Override
     public String postBotReplyTweet(String tweetContent, String inReplyToTweetId, boolean logToBlockchain) {
-        SocialMediaBotProperties botProperties = botPropertiesProvider.getProperties();
-        OAuth10aService service = new ServiceBuilder(botProperties.getApiKey())
-                .apiSecret(botProperties.getApiSecretKey())
+        OAuth10aService service = new ServiceBuilder(botCredentials.getApiKey())
+                .apiSecret(botCredentials.getApiSecret())
                 .build(TwitterApi.instance());
 
         OAuth1AccessToken oauth1AccessToken = new OAuth1AccessToken(
-                botProperties.getAccessToken(),
-                botProperties.getAccessTokenSecret());
+                botCredentials.getAccessToken(),
+                botCredentials.getAccessTokenSecret());
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -136,7 +133,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
                 if (logToBlockchain) {
                     String body = response.getBody();
                     String tweetId = objectMapper.readTree(body).at("/data/id").asText();
-                    String tweetUrl = "https://x.com/" + botProperties.getUsername() + "/status/" + tweetId;
+                    String tweetUrl = "https://x.com/" + botCredentials.getUsername() + "/status/" + tweetId;
 
                     TweetLogDto log = new TweetLogDto(tweetId, "bot", tweetUrl, "(reply)");
                     String blockchainResult = blockchainService.logTweetToBlockchain(log);

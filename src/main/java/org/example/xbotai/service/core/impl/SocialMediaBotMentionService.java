@@ -11,11 +11,10 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 
 import org.example.xbotai.config.ApiUrls;
-import org.example.xbotai.config.SocialMediaBotProperties;
+import org.example.xbotai.config.BotCredentialsConfig;
 import org.example.xbotai.config.SocialMediaUserProperties;
 import org.example.xbotai.dto.TrendSelectionRequest;
 import org.example.xbotai.model.ProcessedTweet;
-import org.example.xbotai.provider.SystemSocialMediaBotPropertiesProvider;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
 import org.example.xbotai.repository.ProcessedTweetRepository;
 import org.example.xbotai.service.core.SocialMediaService;
@@ -41,7 +40,7 @@ public class SocialMediaBotMentionService {
     public static final String TREND_COMMAND = "trend";
 
     private final SystemSocialMediaUserPropertiesProvider systemUserPropertiesProvider;
-    private final SystemSocialMediaBotPropertiesProvider systemBotPropertiesProvider;
+    private final BotCredentialsConfig botCredentials;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final SocialMediaService socialMediaService;
     private final TrendsCommandResponder trendsCommandResponder;
@@ -58,28 +57,26 @@ public class SocialMediaBotMentionService {
 
     public SocialMediaBotMentionService(
             SystemSocialMediaUserPropertiesProvider propertiesProvider,
-                                     SystemSocialMediaBotPropertiesProvider systemBotPropertiesProvider,
-                                     SocialMediaService socialMediaService,
-                                     TrendsCommandResponder trendsCommandResponder,
-                                     ProcessedTweetRepository processedTweetRepository) {
+            BotCredentialsConfig botCredentials,
+            SocialMediaService socialMediaService,
+            TrendsCommandResponder trendsCommandResponder,
+            ProcessedTweetRepository processedTweetRepository) {
         this.systemUserPropertiesProvider = propertiesProvider;
-        this.systemBotPropertiesProvider = systemBotPropertiesProvider ;
+        this.botCredentials = botCredentials;
         this.socialMediaService = socialMediaService;
         this.trendsCommandResponder = trendsCommandResponder;
         this.processedTweetRepository = processedTweetRepository;
+        this.botUsername = botCredentials.getUsername();
     }
 
     private void initOAuthServiceIfNeeded() {
         if (oAuthService == null || accessToken == null) {
             try {
-                getUserPropertiesFromDB();
-
-                SocialMediaBotProperties botProps = getBotPropertiesFromDB();
-
-                this.oAuthService = new ServiceBuilder(botProps.getApiKey())
-                        .apiSecret(botProps.getApiSecretKey())
+                this.oAuthService = new ServiceBuilder(botCredentials.getApiKey())
+                        .apiSecret(botCredentials.getApiSecret())
                         .build(TwitterApi.instance());
-                this.accessToken = new OAuth1AccessToken(botProps.getAccessToken(), botProps.getAccessTokenSecret());
+                this.accessToken = new OAuth1AccessToken(botCredentials.getAccessToken(),
+                        botCredentials.getAccessTokenSecret());
             } catch (Exception e) {
                 logger.error("Failed to initialize OAuth service", e);
             }
@@ -91,12 +88,6 @@ public class SocialMediaBotMentionService {
         this.userUsername = userProps.getUsername();
     }
 
-    private SocialMediaBotProperties getBotPropertiesFromDB() {
-        SocialMediaBotProperties botProps = systemBotPropertiesProvider.getProperties();
-        this.botUsername = botProps.getUsername();
-        return botProps;
-    }
-
     /**
      * Polls for tweets in the bot's account that mention the bot every minute.
      * Then filters them to keep only tweets sent from the selected user's account.
@@ -105,7 +96,7 @@ public class SocialMediaBotMentionService {
     public void pollMentions() {
         initOAuthServiceIfNeeded();
         try {
-            String botId = systemBotPropertiesProvider.getProperties().getUserID();
+            String botId = botCredentials.getUserId();
 
             String url = ApiUrls.X_API_BASE + "/users/" + botId + "/mentions?tweet.fields=author_id";
             if (lastSeenMentionId != null) {

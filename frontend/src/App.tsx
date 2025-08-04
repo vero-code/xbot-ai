@@ -8,7 +8,6 @@ import RegisterLayout from "./layouts/auth/RegisterLayout.tsx";
 import SocialAccountLayout from "./layouts/SocialAccountLayout.tsx";
 import BlockchainConsoleLayout from "./layouts/BlockchainConsoleLayout.tsx";
 import DocumentationLayout from "./layouts/DocumentationLayout.tsx";
-import SocialAccountBotLayout from "./layouts/SocialAccountBotLayout.tsx";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
@@ -23,7 +22,6 @@ function App() {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<HomeLayout />} />
                     <Route path="/social-account" element={<SocialAccountLayout />} />
-                    <Route path="/social-account-bot" element={<SocialAccountBotLayout />} />
                     <Route path="/blockchain-console" element={<BlockchainConsoleLayout />} />
                     <Route path="/documentation" element={<DocumentationLayout />} />
                 </Route>

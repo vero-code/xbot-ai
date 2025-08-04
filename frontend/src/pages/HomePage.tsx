@@ -20,7 +20,6 @@ const HomePage: React.FC = () => {
             <div className="content-container">
                 <div className="links-container">
                     <Link to="/social-account" className="styled-link">🔗 CONNECT YOUR ACCOUNT X</Link>
-                    <Link to="/social-account-bot" className="styled-link">🤖 CONNECT BOT ACCOUNT X</Link>
                     <Link to="/blockchain-console" className="styled-link">📜 GO TO NEAR CONSOLE</Link>
                     <Link to="/documentation" className="styled-link">📚 READ DOCUMENTATION</Link>
                 </div>

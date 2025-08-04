@@ -20,7 +20,7 @@ public class SocialMediaUserProperties implements SocialMediaProperties {
     }
 
     @Override
-    public String getApiSecretKey() {
+    public String getApiSecret() {
         return apiSecretKey;
     }
 

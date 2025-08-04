@@ -1,14 +1,21 @@
 package org.example.xbotai.config;
 
-public class SocialMediaBotProperties implements SocialMediaProperties {
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ConfigurationProperties(prefix = "xbot.credentials.bot")
+@Data
+public class BotCredentialsConfig implements SocialMediaProperties {
 
     private String apiKey;
-    private String apiSecretKey;
+    private String apiSecret;
     private String jwtToken;
     private String accessToken;
     private String accessTokenSecret;
     private String username;
-    private String userID;
+    private String userId;
 
     @Override
     public String getApiKey() {
@@ -19,13 +26,12 @@ public class SocialMediaBotProperties implements SocialMediaProperties {
         this.apiKey = apiKey;
     }
 
-    @Override
-    public String getApiSecretKey() {
-        return apiSecretKey;
+    public String getApiSecret() {
+        return apiSecret;
     }
 
-    public void setApiSecretKey(String apiSecretKey) {
-        this.apiSecretKey = apiSecretKey;
+    public void setApiSecret(String apiSecret) {
+        this.apiSecret = apiSecret;
     }
 
     @Override
@@ -64,11 +70,11 @@ public class SocialMediaBotProperties implements SocialMediaProperties {
         this.username = username;
     }
 
-    public String getUserID() {
-        return userID;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
