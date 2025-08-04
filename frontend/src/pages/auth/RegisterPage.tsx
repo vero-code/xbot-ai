@@ -24,6 +24,11 @@ const RegisterPage: React.FC = () => {
             return;
         }
 
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters.");
+            return;
+        }
+
         try {
             await API.post("/auth/register", {
                 username,
@@ -33,11 +38,16 @@ const RegisterPage: React.FC = () => {
 
             setSuccess("You have successfully registered. Redirect to login...");
             setTimeout(() => navigate("/login"), 2000);
-        } catch (error) {
+        } catch (error: any) {
             console.error("You were unable to register:", error);
-            setError("Error during registration. Try again.");
+            const errorMessage = error.response?.data?.message
+                || error.response?.data
+                || "Error during registration. Try again.";
+            setError(errorMessage);
         }
     };
+
+    const isPasswordError = error === "Passwords do not match!" || error === "Password must be at least 6 characters.";
 
     return (
         <div className="glass-container">
@@ -48,7 +58,7 @@ const RegisterPage: React.FC = () => {
                 <div className="form-group">
                     <i className="field-icon">👨🏻‍💻</i>
                     <input
-                        className={`auth-input ${error ? "input-error" : ""}`}
+                        className={`auth-input ${error && !isPasswordError ? "input-error" : ""}`}
                         type="text"
                         placeholder="Username"
                         value={username}
@@ -60,7 +70,7 @@ const RegisterPage: React.FC = () => {
                 <div className="form-group">
                     <i className="field-icon">✉️</i>
                     <input
-                        className={`auth-input ${error ? "input-error" : ""}`}
+                        className={`auth-input ${error && !isPasswordError ? "input-error" : ""}`}
                         type="email"
                         placeholder="Email"
                         value={email}
@@ -72,7 +82,7 @@ const RegisterPage: React.FC = () => {
                 <div className="form-group">
                     <i className="field-icon">🔒</i>
                     <input
-                        className={`auth-input ${error ? "input-error" : ""}`}
+                        className={`auth-input ${isPasswordError ? "input-error" : ""}`}
                         type="password"
                         placeholder="Password"
                         value={password}
@@ -83,7 +93,7 @@ const RegisterPage: React.FC = () => {
                 <div className="form-group">
                     <i className="field-icon">🔒</i>
                     <input
-                        className={`auth-input ${error ? "input-error" : ""}`}
+                        className={`auth-input ${isPasswordError ? "input-error" : ""}`}
                         type="password"
                         placeholder="Confirm Password"
                         value={confirmPassword}

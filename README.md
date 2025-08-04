@@ -5,7 +5,7 @@
 ## ✨ **Recognitions & Awards** ✨
 
 * **Wildcard Track Winner** (AI & Autonomous Infrastructure) at **PL_Genesis: Modular Worlds Hackathon**
-* **Founders Forge Top 15 Pick** (selected among the top ~4% of projects, includes a $10K non-dilutive grant & mentorship)
+* **Founders Forge Top 15 Pick** (selected among the top ~4% of projects)
 
 ## 🎯 Originally Submitted to
 
@@ -133,27 +133,29 @@ Create a file named **application-local.properties** in resources (example: ```s
 
 🔹 Generate jwt.secret:
 
-On **Windows (PowerShell):**
+```bash  
+# Windows (PowerShell):
+[Convert]::ToBase64String((1..64 | ForEach-Object {Get-Random -Maximum 256}))
 
-```bash
- [Convert]::ToBase64String((1..64 | ForEach-Object {Get-Random -Maximum 256}))
+# Linux/macOS:
+openssl rand -base64 64
 ```
 
-On **Linux/macOS**:
-
-```bash
- openssl rand -base64 64
- ```
-
-🔹 Add the generated secret key to ```src/main/resources/application.properties:```
+🔹 Add the generated secret key to ```src/main/resources/application.properties```:
 ```bash
  jwt.secret=your_jwt_secret
  ```
+
+🔹Run backend service:
+```bash
+ mvn spring-boot:run
+```
 
 #### ✅ Setting Frontend:
 ```bash
  cd frontend
  npm install
+ npm run dev
 ```
 ---
 
