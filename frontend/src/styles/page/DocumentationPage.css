@@ -1,3 +1,4 @@
+/* frontend/src/styles/page/DocumentationPage.css */
 html, body {
     height: 100%;
     margin: 0;
@@ -17,13 +18,7 @@ body {
     min-height: 100vh;
 }
 
-#root {
-    font-family: 'Poppins', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    max-width: 70%;
-}
-
 .documentation-container {
-    width: 100%;
     margin: 0 30px;
     padding: 40px;
     background: rgba(255, 255, 255, 0.1);
@@ -55,21 +50,6 @@ body {
     max-width: 70%;
     margin: 0 auto;
     line-height: 1.6;
-}
-
-.documentation-content {
-    margin-bottom: 40px;
-}
-
-.doc-columns {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    margin-bottom: 40px;
-}
-
-.doc-column {
-    width: 100%;
 }
 
 .doc-section {
@@ -106,6 +86,7 @@ body {
 .doc-section ul {
     list-style: none;
     padding: 0;
+    text-align: left;
 }
 
 .doc-section li {

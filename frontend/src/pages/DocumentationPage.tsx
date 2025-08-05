@@ -88,21 +88,21 @@ const DocumentationPage: React.FC = () => {
                         <section className="doc-section">
                             <h2>Testing Bot Interaction</h2>
                             <p>
-                                After setting up the project and connecting your **personal X account** in the UI, you can test the bot.
+                                After setting up the project and connecting your <b>personal X account</b> in the UI, you can test the bot.
                             </p>
-                            <p>1️⃣ **Trigger the bot with a mention**</p>
+                            <p>1️⃣ <b>Trigger the bot with a mention</b></p>
                             <p>In your personal X account, post a tweet mentioning your bot's username:</p>
                             <pre className="code-block">
                                 {`@your_bot_username trends`}
                             </pre>
                             <p>
-                                2️⃣ **Activate Mention Polling**
+                                2️⃣ <b>Activate Mention Polling</b>
                             </p>
                             <p>
                                 To make the bot check for mentions, you may need to uncomment the `@Scheduled` annotation in the `SocialMediaBotMentionService.java` file in the backend code.
                             </p>
                             <p>
-                                3️⃣ **Reply to the Bot**
+                                3️⃣ <b>Reply to the Bot</b>
                             </p>
                             <p>The bot will reply with a list of trends. Reply to that tweet with your chosen trend:</p>
                             <pre className="code-block">
