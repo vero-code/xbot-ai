@@ -101,7 +101,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
     }
 
     @Override
-    public String postBotReplyTweet(String tweetContent, String inReplyToTweetId, boolean logToBlockchain) {
+    public String postBotReplyTweet(String tweetContent, String inReplyToTweetId, String userId, boolean logToBlockchain) {
         OAuth10aService service = new ServiceBuilder(botCredentials.getApiKey())
                 .apiSecret(botCredentials.getApiSecret())
                 .build(TwitterApi.instance());
@@ -135,7 +135,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
                     String tweetId = objectMapper.readTree(body).at("/data/id").asText();
                     String tweetUrl = "https://x.com/" + botCredentials.getUsername() + "/status/" + tweetId;
 
-                    TweetLogDto log = new TweetLogDto(tweetId, "bot", tweetUrl, "(reply)");
+                    TweetLogDto log = new TweetLogDto(tweetId, userId, tweetUrl, "(reply)");
                     String blockchainResult = blockchainService.logTweetToBlockchain(log);
                     return "Tweet reply successfully posted! Blockchain log: " + blockchainResult;
                 } else {

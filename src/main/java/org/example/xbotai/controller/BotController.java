@@ -4,6 +4,7 @@ import org.example.xbotai.dto.TrendSelectionRequest;
 import org.example.xbotai.dto.TweetGenerationRequest;
 import org.example.xbotai.service.core.AIService;
 import org.example.xbotai.service.core.SocialMediaService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -74,5 +75,15 @@ public class BotController {
         String response = socialMediaService.postUserTweet(tweetToPost, userId, trend, true);
         userGeneratedTweets.remove(userId);
         return response;
+    }
+
+    @PostMapping("/test-reply")
+    public ResponseEntity<String> testBotReply(@RequestBody Map<String, String> payload) {
+        String tweetContent = payload.get("content");
+        String inReplyToTweetId = payload.get("replyToId");
+        String userId = payload.get("userId");
+
+        String result = socialMediaService.postBotReplyTweet(tweetContent, inReplyToTweetId, userId, true);
+        return ResponseEntity.ok(result);
     }
 }

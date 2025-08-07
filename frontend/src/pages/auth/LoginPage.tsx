@@ -7,6 +7,8 @@ import "../../styles/Button.css";
 
 interface AuthResponse {
     token: string;
+    id: string;
+    username: string;
 }
 
 const LoginPage: React.FC = () => {
@@ -28,6 +30,8 @@ const LoginPage: React.FC = () => {
 
             const data = response.data;
             localStorage.setItem("token", data.token);
+            localStorage.setItem("userId", data.id);
+            localStorage.setItem("username", data.username);
 
             window.location.href = "/";
         } catch (error) {

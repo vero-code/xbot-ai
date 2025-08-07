@@ -1,4 +1,4 @@
 package org.example.xbotai.dto.auth;
 
-public record AuthResponse(String token) {
+public record AuthResponse(String token, String id, String username) {
 }

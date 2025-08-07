@@ -216,27 +216,24 @@ mvn spring-boot:run
 
 ### 5️⃣ Connect NEAR for blockchain logging
 
-Need to set up Ubuntu (or WSL), then:
+To write logs to the blockchain, the backend script needs to sign transactions. This requires access to a NEAR Testnet account's keys. This is a **one-time setup** for your local development environment.
 
-1. Create a project using `npx create-near-app@latest`.
-2. Replace the default `src/contract.ts` with your custom contract file, located at `blockchain/ubuntu/src/contract.ts`.
-3. Recompile contract to `.wasm` using `npm run build` (or use the pre-built file located at `blockchain/ubuntu/build/hello_near.wasm`).
-4. Deploy contract to your testnet account using `near deploy your_account_id.testnet ./build/hello_near.wasm`.
-5. Return to Windows environment. In `blockchain/near-logger.js`, change the contract name:
-
-`const CONTRACT_NAME = 'your_account_id.testnet';`
-
-6. Important for Windows users: ensure your account credentials are correctly set up in C:\Users\YOUR_USERNAME\.near-credentials
-
-> See more in the official [documentation](https://docs.near.org/smart-contracts/quickstart) about Smart Contracts.
-
-For testing, use the example payload file `blockchain/payload.json` with the command:
-
+1. **Install NEAR CLI**:
 ```bash
-node blockchain/near-logger.js --file=blockchain/payload.json
+npm install -g near-cli
 ```
 
----
+2. **Authorize Your Local Machine**:
+
+```bash
+near login
+```
+
+After you authorize, `near-cli` will automatically create a key file in `~/.near-credentials` (for Linux/macOS) or `C:\Users\YOUR_USERNAME\.near-credentials` (for Windows).
+
+The application's script will automatically use these credentials to sign transactions when running on your local machine. You are not deploying a new contract, only setting up the "key" needed to write to the existing one.
+  
+---  
 
 ### 6️⃣ Test the Bot Interaction in X
 
@@ -299,7 +296,7 @@ If everything works correctly, you will see:
 
 1. Log in to the UI: http://localhost:5173/ .
 2. Click **"GO TO NEAR CONSOLE"**
-3. Check if your tweet is recorded **with a metadata**:  Tweet ID, URL, User ID, Trend, Timestamp.
+3. Check if your tweet is recorded **with a metadata**:  Tweet ID, User ID, URL, Trend, Timestamp.
 
 📌 **If no logs appear, make sure your NEAR contract is deployed successfully.**
 
@@ -328,12 +325,11 @@ If everything works correctly, you will see:
 
 * H2 Database Console: http://localhost:8080/h2-console:
 
-  - JDBC URL — jdbc:h2:file:./data/xbot-ai-db
+    - JDBC URL — jdbc:h2:file:./data/xbot-ai-db
 
 
 ## 📜 License
 
 This project is licensed under the **MIT License** – free to use, modify, and distribute.
 
-**Contributions are welcome!**  
-If you find bugs, want to add features, or improve documentation, feel free to open an issue or submit a pull request.
+**Contributions are welcome!** If you find bugs, want to add features, or improve documentation, feel free to open an issue or submit a pull request.

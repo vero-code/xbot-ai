@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TweetLogDto {
     private String tweetId;
-    private String url;
     private String userId;
+    private String url;
     private String trend;
 }

@@ -7,6 +7,7 @@ import org.example.xbotai.dto.auth.AuthResponse;
 import org.example.xbotai.dto.auth.LoginRequest;
 import org.example.xbotai.dto.UserDto;
 import org.example.xbotai.jwt.JwtTokenProvider;
+import org.example.xbotai.model.User;
 import org.example.xbotai.service.ui.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,9 +62,17 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtTokenProvider.generateToken(authentication);
 
-            log.info("User '{}' logged in successfully.", request.username());
+            String username = authentication.getName();
 
-            return ResponseEntity.ok(new AuthResponse(jwt));
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found after successful authentication"));
+
+            String userId = user.getId().toString();
+            log.info("User '{}' logged in successfully. ID: {}", username, userId);
+
+            AuthResponse authResponse = new AuthResponse(jwt, userId, username);
+
+            return ResponseEntity.ok(authResponse);
         } catch (org.springframework.security.core.AuthenticationException e) {
             log.error("Login failed for user '{}': {}", request.username(), e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
