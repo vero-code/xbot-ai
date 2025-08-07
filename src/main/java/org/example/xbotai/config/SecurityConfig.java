@@ -45,6 +45,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/api/social-account/get-user-id").permitAll()
                         .requestMatchers("/api/blockchain/logs").permitAll()
+                        .requestMatchers("/api/blockchain/test-log").permitAll()
                         .requestMatchers("/api/bot/trends", "/api/bot/select-trend",
                                 "/api/bot/generate-tweet", "/api/bot/post-tweet").permitAll()
                         .anyRequest().authenticated()
