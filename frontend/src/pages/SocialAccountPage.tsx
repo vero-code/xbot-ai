@@ -104,6 +104,8 @@ const SocialAccountPage: React.FC = () => {
             // 1. Get UserID by Username
             const userId = await fetchUserIdFromBackend(username, jwtToken);
 
+            localStorage.setItem('xUserId', userId);
+
             // 2. Collect all data
             const data = {
                 username,

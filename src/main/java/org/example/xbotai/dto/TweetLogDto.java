@@ -12,4 +12,5 @@ public class TweetLogDto {
     private String userId;
     private String url;
     private String trend;
+    private String timestamp;
 }

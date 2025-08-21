@@ -20,6 +20,7 @@ import org.example.xbotai.service.core.SocialMediaService;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -153,7 +154,9 @@ public class SocialMediaServiceImpl implements SocialMediaService {
                     String tweetId = objectMapper.readTree(body).at("/data/id").asText();
                     String tweetUrl = "https://x.com/" + botCredentials.getUsername() + "/status/" + tweetId;
 
-                    TweetLogDto log = new TweetLogDto(tweetId, userId, tweetUrl, "(reply)");
+                    String timestamp = Instant.now().toString();
+                    TweetLogDto log = new TweetLogDto(tweetId, userId, tweetUrl, "(reply)", timestamp);
+
                     String blockchainResult = blockchainService.logTweetToBlockchain(log);
                     return "Tweet reply successfully posted! Blockchain log: " + blockchainResult;
                 } else {
@@ -169,6 +172,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
     private TweetLogDto createTweetLog(String tweetId, String userId, String username, String trend) {
         String tweetUrl = "https://x.com/" + username.replace("@", "") + "/status/" + tweetId;
-        return new TweetLogDto(tweetId, tweetUrl, userId, trend);
+        String timestamp = Instant.now().toString();
+        return new TweetLogDto(tweetId, userId, tweetUrl, trend, timestamp);
     }
 }
