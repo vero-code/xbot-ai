@@ -122,13 +122,13 @@ You will need a dedicated X account to act as your bot.
 
 1. **Log in or sign up** on [Developer Portal](https://developer.twitter.com/en/portal/dashboard).
 2. In the left sidebar, click **Projects & Apps**, and select your project (default one).
-3. In the **User authentication settings**, click **Edit and configure**.
+3. In the **User authentication settings**, click **Set up**.
 4. Configure the settings as follows:
 * **App permissions:** ```Read and write```
 * **Type of App:** ```Web App, Automated App, or Bot```
 * **Callback URI / Redirect URL:** ```http://localhost:8080/auth/callback```
 * **Website URL:** *(Any valid URL, e.g., GitHub repo)*
-5. Click **Save**.
+5. Click **Save** and **Done**.
 6. Navigate to the **Keys and Tokens** tab to generate and view all your keys.
 
 **Next**, add these credentials to your `application-local.properties` file.

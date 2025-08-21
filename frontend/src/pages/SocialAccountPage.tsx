@@ -153,7 +153,7 @@ const SocialAccountPage: React.FC = () => {
                             placeholder=" "
                             required
                         />
-                        <label htmlFor="username">Username</label>
+                        <label htmlFor="username">Username (without @)</label>
                     </div>
                     <div className="form-group">
                         <input
