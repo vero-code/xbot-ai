@@ -11,8 +11,11 @@ import com.github.scribejava.core.oauth.OAuth10aService;
 import org.example.xbotai.config.ApiUrls;
 import org.example.xbotai.config.BotCredentialsConfig;
 import org.example.xbotai.config.SocialMediaProperties;
+import org.example.xbotai.config.SocialMediaUserProperties;
 import org.example.xbotai.dto.TweetLogDto;
+import org.example.xbotai.model.SocialAccount;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
+import org.example.xbotai.repository.SocialAccountRepository;
 import org.example.xbotai.service.core.SocialMediaService;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,14 +34,18 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
     private final BlockchainService blockchainService;
 
+    private final SocialAccountRepository socialAccountRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(SocialMediaServiceImpl.class);
 
     public SocialMediaServiceImpl(SystemSocialMediaUserPropertiesProvider propertiesProvider,
                                   BotCredentialsConfig botCredentials,
-                                  BlockchainService blockchainService) {
+                                  BlockchainService blockchainService,
+                                  SocialAccountRepository socialAccountRepository) {
         this.propertiesProvider = propertiesProvider;
         this.botCredentials = botCredentials;
         this.blockchainService = blockchainService;
+        this.socialAccountRepository = socialAccountRepository;
     }
 
     /** Post a tweet as a bot. */
@@ -50,7 +57,18 @@ public class SocialMediaServiceImpl implements SocialMediaService {
     /** Post a tweet as a user. */
     @Override
     public String postUserTweet(String tweetContent, String userId, String selectedTrend, boolean logToBlockchain) {
-        SocialMediaProperties userProperties = propertiesProvider.getProperties();
+        // Deciding which account to use to post a tweet
+        SocialAccount account = socialAccountRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("No social account found for user ID: " + userId));
+
+        SocialMediaUserProperties userProperties = new SocialMediaUserProperties ();
+        userProperties.setApiKey(account.getApiKey());
+        userProperties.setApiSecretKey(account.getApiSecretKey());
+        userProperties.setAccessToken(account.getAccessToken());
+        userProperties.setAccessTokenSecret(account.getAccessTokenSecret());
+        userProperties.setUsername(account.getUsername());
+        userProperties.setUserID(account.getUserId());
+
         return doPostTweet(userProperties, tweetContent, userId, selectedTrend, logToBlockchain);
     }
 
