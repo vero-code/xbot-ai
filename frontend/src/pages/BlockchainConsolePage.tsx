@@ -2,6 +2,7 @@ import React, { useState, useEffect, ReactNode } from 'react';
 import '../styles/page/BlockchainConsolePage.css';
 import {useNavigate} from "react-router-dom";
 import API from "../api.ts";
+import { sha256 } from "../utils";
 
 interface TweetLog {
     tweetId: string;
@@ -50,7 +51,9 @@ const BlockchainConsolePage: React.FC = () => {
 
         const fetchLogs = async () => {
             try {
-                const response = await API.get(`/blockchain/logs?userId=${xUserId}`);
+                const hashedUserId = await sha256(xUserId);
+
+                const response = await API.get(`/blockchain/logs?userId=${hashedUserId}`);
                 setLogs(response.data);
                 if (response.data.length === 0) {
                     setMessage("No logs found for your account.");

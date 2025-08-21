@@ -17,6 +17,7 @@ import org.example.xbotai.model.SocialAccount;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
 import org.example.xbotai.repository.SocialAccountRepository;
 import org.example.xbotai.service.core.SocialMediaService;
+import org.example.xbotai.util.HashingUtil;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -155,7 +156,8 @@ public class SocialMediaServiceImpl implements SocialMediaService {
                     String tweetUrl = "https://x.com/" + botCredentials.getUsername() + "/status/" + tweetId;
 
                     String timestamp = Instant.now().toString();
-                    TweetLogDto log = new TweetLogDto(tweetId, userId, tweetUrl, "(reply)", timestamp);
+                    String hashedUserId = HashingUtil.sha256(userId);
+                    TweetLogDto log = new TweetLogDto(tweetId, hashedUserId, tweetUrl, "(reply)", timestamp);
 
                     String blockchainResult = blockchainService.logTweetToBlockchain(log);
                     return "Tweet reply successfully posted! Blockchain log: " + blockchainResult;
@@ -173,6 +175,8 @@ public class SocialMediaServiceImpl implements SocialMediaService {
     private TweetLogDto createTweetLog(String tweetId, String userId, String username, String trend) {
         String tweetUrl = "https://x.com/" + username.replace("@", "") + "/status/" + tweetId;
         String timestamp = Instant.now().toString();
-        return new TweetLogDto(tweetId, userId, tweetUrl, trend, timestamp);
+
+        String hashedUserId = HashingUtil.sha256(userId);
+        return new TweetLogDto(tweetId, hashedUserId, tweetUrl, trend, timestamp);
     }
 }
