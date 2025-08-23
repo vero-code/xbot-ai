@@ -53,7 +53,10 @@ public class SecurityConfig {
                 )
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new CorsConfiguration();
-                    corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+                    corsConfig.setAllowedOrigins(Arrays.asList(
+                            "http://localhost:5173",
+                            "https://xbot-ai-468005.web.app"
+                    ));
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-CSRF-TOKEN"));
                     corsConfig.setExposedHeaders(List.of("Authorization"));
