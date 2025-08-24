@@ -13,29 +13,21 @@ import com.github.scribejava.core.oauth.OAuth10aService;
 import org.example.xbotai.config.ApiUrls;
 import org.example.xbotai.config.BotCredentialsConfig;
 import org.example.xbotai.config.SocialMediaUserProperties;
-import org.example.xbotai.dto.TrendSelectionRequest;
 import org.example.xbotai.model.ProcessedTweet;
 import org.example.xbotai.model.SocialAccount;
 import org.example.xbotai.provider.SystemSocialMediaUserPropertiesProvider;
 import org.example.xbotai.repository.ProcessedTweetRepository;
 import org.example.xbotai.repository.SocialAccountRepository;
+import org.example.xbotai.service.core.AIService;
 import org.example.xbotai.service.core.SocialMediaService;
 import org.example.xbotai.util.SocialMediaCommandParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SocialMediaBotMentionService {
@@ -59,19 +51,23 @@ public class SocialMediaBotMentionService {
     private final ProcessedTweetRepository processedTweetRepository;
     private final SocialAccountRepository socialAccountRepository;
 
+    private final AIService aiService;
+
     public SocialMediaBotMentionService(
             SystemSocialMediaUserPropertiesProvider propertiesProvider,
             BotCredentialsConfig botCredentials,
             SocialMediaService socialMediaService,
             TrendsCommandResponder trendsCommandResponder,
             ProcessedTweetRepository processedTweetRepository,
-            SocialAccountRepository socialAccountRepository) {
+            SocialAccountRepository socialAccountRepository,
+            AIService aiService) {
         this.systemUserPropertiesProvider = propertiesProvider;
         this.botCredentials = botCredentials;
         this.socialMediaService = socialMediaService;
         this.trendsCommandResponder = trendsCommandResponder;
         this.processedTweetRepository = processedTweetRepository;
         this.socialAccountRepository = socialAccountRepository;
+        this.aiService = aiService;
         this.botUsername = botCredentials.getUsername();
     }
 
@@ -98,7 +94,12 @@ public class SocialMediaBotMentionService {
      * Polls for tweets in the bot's account that mention the bot every minute.
      * Then filters them to keep only tweets sent from the selected user's account.
      */
-    //@Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000)
+    @ConditionalOnProperty(
+            name = "scheduling.enabled",
+            havingValue = "true",
+            matchIfMissing = true
+    )
     public void pollMentions() {
         initOAuthServiceIfNeeded();
         try {
@@ -243,58 +244,28 @@ public class SocialMediaBotMentionService {
 
     /** Handles the country command. */
     private void handleCountryTrendRequest(String tweetId, String userCountry, String userId) {
-        RestTemplate restTemplate = new RestTemplate();
-        String url = ApiUrls.BACKEND_URL + "/api/bot/trends?country=" + userCountry;
-        logger.info("Sending request to URL: {}", url);
-        List<String> trends = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<String>>() {}
-        ).getBody();
-        logger.info("Trends received: {}", trends);
+        String aiResponse = aiService.fetchTrendsFromAI(userCountry);
+        if (aiResponse.length() > 280) {
+            aiResponse = aiResponse.substring(0, 277) + "...";
+        }
+        List<String> trends = Arrays.asList(aiResponse.split("\n"));
 
+        logger.info("Trends received: {}", trends);
         trendsCommandResponder.displayTrends(tweetId, trends, userId);
     }
 
     /** Processing the trend selection command. */
     private void handleTrendSelectionAndGeneration(String tweetId, String userId, String selectedTrend) {
-        TrendSelectionRequest requestBody = new TrendSelectionRequest(userId, selectedTrend);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<TrendSelectionRequest> entity = new HttpEntity<>(requestBody, headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-        String url = ApiUrls.BACKEND_URL + "/api/bot/select-trend";
-        String response = restTemplate.postForObject(url, entity, String.class);
-
-        String generatedTweetResponse = fetchGeneratedTweet(userId);
+        String generatedTweetResponse = aiService.generateTweet(selectedTrend);
         logger.info("Generated tweet: {}", generatedTweetResponse);
-
         handlePostTweet(tweetId, userId, generatedTweetResponse, selectedTrend);
-    }
-
-    /** Calls the backend to generate a tweet. */
-    private String fetchGeneratedTweet(String userId) {
-        RestTemplate restTemplate = new RestTemplate();
-        String generateTweetUrl = ApiUrls.BACKEND_URL + "/api/bot/generate-tweet?userId=" + userId;
-        return restTemplate.getForObject(generateTweetUrl, String.class);
     }
 
     /** Handles posting the generated tweet. */
     private boolean handlePostTweet(String tweetId, String userId, String generatedTweetResponse, String trend) {
         try {
-            RestTemplate restTemplate = new RestTemplate();
-            String urlPostTweet = ApiUrls.BACKEND_URL + "/api/bot/post-tweet";
-            Map<String, String> requestBodyPostTweet = new HashMap<>();
-            requestBodyPostTweet.put("userId", userId);
-            requestBodyPostTweet.put("tweet", generatedTweetResponse);
-            requestBodyPostTweet.put("trend", trend);
-            String responsePostTweet = restTemplate.postForObject(urlPostTweet, requestBodyPostTweet, String.class);
+            String responsePostTweet = socialMediaService.postUserTweet(generatedTweetResponse, userId, trend, true);
             logger.info("Post response: {}", responsePostTweet);
-
             return true;
         } catch (Exception e) {
             logger.error("Error calling confirm post API", e);

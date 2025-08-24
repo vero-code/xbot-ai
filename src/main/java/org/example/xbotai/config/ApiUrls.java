@@ -8,9 +8,6 @@ public class ApiUrls {
     public static final String X_TWEETS_SEARCH_RECENT = X_API_BASE + "/tweets/search/recent";
     public static final String X_TWEETS = X_API_BASE + "/tweets";
 
-    // Local
-    public static final String BACKEND_URL = "http://localhost:8080";
-
     private ApiUrls() {
     }
   

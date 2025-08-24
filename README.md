@@ -247,13 +247,8 @@ The application's script will automatically use these credentials to sign transa
 @[your_bot] trends
 ```
 
-4. Uncomment line in the `src/main/java/.../service/core/impl/SocialMediaBotMentionService.java` file:
-
-```bash
-@Scheduled(fixedDelay = 60000)
-```
-
-This line enables bot mention tracking.
+4. To enable the bot's automatic mention polling, ensure the following line is set to `true` in the `application.properties` file:
+   `scheduling.enabled=true`
 
 ❇️ API Free Plan has limitations. You can see them in [X Developer Platform](https://developer.twitter.com/en/portal/products) It's recommended to enable it only when everything is set up. ❇️
 

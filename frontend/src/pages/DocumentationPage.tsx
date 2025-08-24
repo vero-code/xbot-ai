@@ -99,7 +99,7 @@ const DocumentationPage: React.FC = () => {
                                 2️⃣ <b>Activate Mention Polling</b>
                             </p>
                             <p>
-                                To make the bot check for mentions, you may need to uncomment the `@Scheduled` annotation in the `SocialMediaBotMentionService.java` file in the backend code.
+                                The bot's ability to automatically check for mentions is controlled by a backend configuration. To enable this feature, ensure the `scheduling.enabled` property is set to `true` in the `application.properties` file on the server.
                             </p>
                             <p>
                                 3️⃣ <b>Reply to the Bot</b>
