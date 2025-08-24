@@ -32,7 +32,6 @@ const BlockchainConsolePage: React.FC = () => {
 
     useEffect(() => {
         const xUserId = localStorage.getItem('xUserId');
-        console.log("Fetching logs for X User ID:", xUserId);
 
         if (!xUserId) {
             setMessage(

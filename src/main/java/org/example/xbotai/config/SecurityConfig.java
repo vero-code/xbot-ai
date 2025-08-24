@@ -18,9 +18,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @Slf4j
@@ -37,6 +41,7 @@ public class SecurityConfig {
                         new AntPathRequestMatcher("/h2-console/**"),
                         new AntPathRequestMatcher("/api/**")
                 ))
+                .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/public/**", "/h2-console/**").permitAll()
@@ -51,23 +56,28 @@ public class SecurityConfig {
                                 "/api/bot/generate-tweet", "/api/bot/post-tweet").permitAll()
                         .anyRequest().authenticated()
                 )
-                .cors(cors -> cors.configurationSource(request -> {
-                    var corsConfig = new CorsConfiguration();
-                    corsConfig.setAllowedOrigins(Arrays.asList(
-                            "http://localhost:5173",
-                            "https://xbot-ai-468005.web.app"
-                    ));
-                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-CSRF-TOKEN"));
-                    corsConfig.setExposedHeaders(List.of("Authorization"));
-                    corsConfig.setAllowCredentials(true);
-                    return corsConfig;
-                }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "https://xbot-ai-468005.web.app"
+        ));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-CSRF-TOKEN", "X-Token"));
+        configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(List.of("Authorization"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
