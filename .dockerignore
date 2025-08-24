@@ -1,0 +1,29 @@
+# Maven output
+target
+
+# IDE configs
+.idea/
+.vscode/
+*.iml
+
+# OS / system files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Env/config
+.env
+*.log
+*.yml
+*.yaml
+
+# Node/npm stuff
+frontend/node_modules
+frontend/dist
+
+# Old data H2
+data/

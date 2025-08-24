@@ -1,0 +1,38 @@
+steps:
+  # Step 1: Build Docker image (includes mvn build)
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/xbot-ai-468005/xbot-images/xbot-backend:latest'
+      - '.'
+    id: 'Build Docker Image'
+
+  # Step 2: Publish the image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/xbot-ai-468005/xbot-images/xbot-backend:latest'
+    id: 'Push Docker Image'
+    wait_for: ['Build Docker Image']
+
+  # Step 3: Deploy
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'xbot-backend'
+      - '--image=us-central1-docker.pkg.dev/xbot-ai-468005/xbot-images/xbot-backend:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8080'
+      - '--set-secrets=spring.datasource.url=DB_URL:latest,spring.datasource.username=DB_USERNAME:latest,spring.datasource.password=DB_PASSWORD:latest,jwt.secret=JWT_SECRET:latest,google.cloud.api.key=GCLOUD_API_KEY:latest,xbot.credentials.bot.api-key=XBOT_API_KEY:latest,xbot.credentials.bot.api-secret=XBOT_API_SECRET:latest,xbot.credentials.bot.access-token=XBOT_ACCESS_TOKEN:latest,xbot.credentials.bot.access-token-secret=XBOT_ACCESS_TOKEN_SECRET:latest,xbot.credentials.bot.jwt-token=XBOT_JWT_TOKEN:latest,xbot.credentials.bot.user-id=XBOT_USER_ID:latest,xbot.credentials.bot.username=XBOT_USERNAME:latest,xbot.blockchain.contract-id=XBOT_CONTRACT_ID:latest'
+    id: 'Deploy to Cloud Run'
+    wait_for: ['Push Docker Image']
+
+images:
+  - 'us-central1-docker.pkg.dev/xbot-ai-468005/xbot-images/xbot-backend:latest'
+
+timeout: '1200s'
