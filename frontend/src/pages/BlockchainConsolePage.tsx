@@ -30,7 +30,7 @@ const BlockchainConsolePage: React.FC = () => {
         }
     };
 
-    useEffect(() => {
+    const fetchLogs = async () => {
         const xUserId = localStorage.getItem('xUserId');
 
         if (!xUserId) {
@@ -48,29 +48,35 @@ const BlockchainConsolePage: React.FC = () => {
             return;
         }
 
-        const fetchLogs = async () => {
-            try {
-                const hashedUserId = await sha256(xUserId);
+        setIsLoading(true);
+        try {
+            const hashedUserId = await sha256(xUserId);
+            const response = await API.get(`/blockchain/logs?userId=${hashedUserId}`);
 
-                const response = await API.get(`/blockchain/logs?userId=${hashedUserId}`);
-                setLogs(response.data);
-                if (response.data.length === 0) {
-                    setMessage("No logs found for your account.");
-                    setMessageType('info');
-                } else {
-                    setMessage('');
-                }
-            } catch (error) {
-                console.error("Error fetching logs", error);
-                setMessage("Error fetching logs");
-                setMessageType('error');
-            } finally {
-                setIsLoading(false);
+            const sortedLogs = response.data.sort((a: TweetLog, b: TweetLog) => {
+                return Number(BigInt(b.timestamp)) - Number(BigInt(a.timestamp));
+            });
+
+            setLogs(sortedLogs);
+
+            if (sortedLogs.length === 0) {
+                setMessage("No logs found for your account.");
+                setMessageType('info');
+            } else {
+                setMessage('');
             }
-        };
+        } catch (error) {
+            console.error("Error fetching logs", error);
+            setMessage("Error fetching logs");
+            setMessageType('error');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchLogs();
-    }, [navigate]);
+    }, []);
 
     return (
         <div className="blockchain-console-container">
@@ -79,7 +85,10 @@ const BlockchainConsolePage: React.FC = () => {
 
             <section className="log-section">
                 <h2>Your Logs</h2>
-                {isLoading ? (
+                <button className="refresh-btn" onClick={fetchLogs} disabled={isLoading}>
+                    {isLoading ? 'Refreshing...' : 'Refresh'}
+                </button>
+                {isLoading && logs.length === 0 ? (
                     <p className="loading">Loading logs...</p>
                 ) : logs.length > 0 ? (
                     <ul className="log-list">

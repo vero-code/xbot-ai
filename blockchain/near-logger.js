@@ -1,14 +1,22 @@
 // blockchain/near-logger.js
 const nearAPI = require('near-api-js');
 const { connect, keyStores } = nearAPI;
-const os = require('os');
-const homedir = os.homedir();
 const fs = require('fs');
 
 const CONTRACT_NAME = 'xbot-logger.testnet';
 
 async function connectToNear() {
-    const keyStore = new keyStores.UnencryptedFileSystemKeyStore(`${homedir}/.near-credentials`);
+    const PRIVATE_KEY = process.env.NEAR_PRIVATE_KEY;
+    const ACCOUNT_ID = process.env.NEAR_ACCOUNT_ID;
+
+    if (!PRIVATE_KEY || !ACCOUNT_ID) {
+        throw new Error("The environment variables NEAR_PRIVATE_KEY and NEAR_ACCOUNT_ID must be set!");
+    }
+
+    const keyStore = new keyStores.InMemoryKeyStore();
+    const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(PRIVATE_KEY);
+    await keyStore.setKey('testnet', ACCOUNT_ID, keyPair);
+
     const connectionConfig = {
         networkId: 'testnet',
         keyStore,
@@ -16,7 +24,7 @@ async function connectToNear() {
     };
 
     const near = await connect(connectionConfig);
-    const signerAccount = await near.account(CONTRACT_NAME);
+    const signerAccount = await near.account(ACCOUNT_ID);
 
     const contract = new nearAPI.Contract(
         signerAccount,
@@ -72,9 +80,10 @@ async function getLogs() {
     return logs;
 }
 
-module.exports = { addLog, getLogs };
 
 (async () => {
+    if (require.main !== module) return;
+
     const args = process.argv.slice(2);
     if (args.length > 0) {
         let raw;
@@ -108,6 +117,8 @@ module.exports = { addLog, getLogs };
             process.exit(1);
         }
     } else {
-        await getLogs();
+        console.log("📝 Retrieved logs from blockchain:");
+        const logs = await getLogs();
+        console.log(JSON.stringify(logs, null, 2));
     }
 })();

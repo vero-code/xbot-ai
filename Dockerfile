@@ -22,9 +22,21 @@ FROM eclipse-temurin:21-jre-jammy
 # Set the working directory to run the application
 WORKDIR /app
 
-# Copy ONLY the built JAR file and the blockchain folder from the previous stage
-COPY --from=builder /app/target/*.jar app.jar
+# Install Node.js
+RUN apt-get update && apt-get install -y curl gnupg && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+
+RUN apt-get install -y nodejs
+
+# Copy the folder with the script from the build stage
 COPY --from=builder /app/blockchain ./blockchain
+
+# Install dependencies for Node.js script (for example, near-api-js)
+RUN cd /app/blockchain && npm install
+
+# Copy ONLY the assembled JAR file from the previous step
+COPY --from=builder /app/target/*.jar app.jar
 
 # Open the port on which the application runs
 EXPOSE 8080
