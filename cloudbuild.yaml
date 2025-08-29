@@ -39,7 +39,7 @@ steps:
     dir: 'frontend'
 
   # Step 6: Deploy to Firebase Hosting
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/cloud-builders/npm'
     entrypoint: 'bash'
     args:
       - '-c'
