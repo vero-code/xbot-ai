@@ -39,14 +39,17 @@ steps:
     dir: 'frontend'
 
   # Step 6: Deploy to Firebase Hosting
-  - name: 'gcr.io/cloud-builders/npm'
-    entrypoint: 'bash'
+  - name: 'node:22-alpine'
+    entrypoint: 'sh'
     args:
       - '-c'
       - |
-        npm install -g firebase-tools
+        node -v
+        npm -v
+        npm install -g firebase-tools@14.15.1
+        firebase --version
         firebase deploy --only hosting --token "$$FIREBASE_TOKEN" --non-interactive --project $PROJECT_ID
-    secretEnv: [ 'FIREBASE_TOKEN' ]
+    secretEnv: ['FIREBASE_TOKEN']
 
 # Section to access Firebase token secret
 availableSecrets:
